@@ -3,6 +3,8 @@ A repository for the plotting scripts and data for the PLT paper.
 
 Ideally, this directory should contain the scripts and all necessary data needed to make each plot. If this is not possible for whatever reason, then it should at least contain the plot saved as a ROOT .C macro so that it can be easily changed as necessary.
 
+* Fig. 6 (accidental rates vs. SBIL): PlotAccidentalRatesPaper.C, originally derived from PLTOffline/AccidentalStudies/PlotAccidentalRatesAllScans.C, which uses the data in AccidentalData/. The 2015 data was originally also in PLTOfflineAccidentalStudies, while I had to pull the 2016 data from Joe's directory in /home/jheidema/PLTOffline/AccidentalStudies on pltoffline (this should really be committed at some point). I modified the script so it can run on either 2015 or 2016 depending on the argument; use .x PlotAccidentalRatesPaper.C(0) for 2015 and (1) for 2016.
+
 * Fig. 11 (track luminosity comparison for one fill): PlotTrackLumiFillPaper.C, originally derived from PLTOffline/TrackLumi2020/PlotTrackLumiFill.C, which uses the data in TrackLumiData/ for fill 5019, also originally from that directory.
 
 * Figs. 12 and 13 (track luminosity VdM results): PlotTrackLumiVdMPaper.C, originally derived from PLTOffline/TrackLumi2020/PlotTrackLumiVdM.C, which uses the data in TrackLumiData/ for fill 6016, also originally from the same directory.

@@ -327,6 +327,7 @@ void PlotAlignmentVsTimePaper(void) {
     t3->Draw();
 
     sprintf(title, "AlignmentVsTime_Ch%d.png", readoutChannel[chan]);
+    c[nScope]->Print(title);
     sprintf(title, "AlignmentVsTime_Ch%d.pdf", readoutChannel[chan]);
     c[nScope]->Print(title);
     // std::cout << "Saved plot to " << title << std::endl;

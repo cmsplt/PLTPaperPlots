@@ -66,11 +66,11 @@ void DrawQuadrant(float cx, float cy, int ang1, int ang2, int startChan) {
   eo->Draw();
   ei->Draw();
 
-  TLine *lu = new TLine(cx/w, (cy+rin)/h, cx/w, (cy+rout)/h);
+  TLine *lu = new TLine(cx/w, (cy+rin-lw/2)/h, cx/w, (cy+rout+lw/2)/h);
   lu->SetLineWidth(lw);
   lu->Draw();
 
-  TLine *ll = new TLine(cx/w, (cy-rin)/h, cx/w, (cy-rout)/h);
+  TLine *ll = new TLine(cx/w, (cy-rin+lw/2)/h, cx/w, (cy-rout-lw/2)/h);
   ll->SetLineWidth(lw);
   ll->Draw();
 

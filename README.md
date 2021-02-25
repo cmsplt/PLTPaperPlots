@@ -9,6 +9,8 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Figs. 12 and 13 (track luminosity VdM results): PlotTrackLumiVdMPaper.C, originally derived from PLTOffline/TrackLumi2020/PlotTrackLumiVdM.C, which uses the data in TrackLumiData/ for fill 6016, also originally from the same directory.
 
+* Fig. 15 (sample alignment procedure): PlotAlignment4444Paper.C, which takes the histograms produced by CalculateAlignment stored in the ROOT file alignment_4444_30M.root and formats them nicely. See the script for details on how the ROOT file is generated.
+
 * Fig. 16 (2015 alignment over time): PlotAlignmentVsTimePaper.C, originally derived from PLTOffline/plotScripts/PlotAlignmentVsTime.C, which uses the alignment data in Alignment2015/, originally from PLTOffline/ALIGNMENT.
 
 * Fig. 28 (PLT/RAMSES corrections for 2016): PlotRAMSESCorrectionsPaper.C, created for the paper to plot the data from David's spreadsheet (pltramseslin.xlsx) which I have extracted the two relevant csv files from (pltramses2016ratio.csv and pltramses2016slope.csv).

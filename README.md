@@ -3,6 +3,8 @@ A repository for the plotting scripts and data for the PLT paper.
 
 Ideally, this directory should contain the scripts and all necessary data needed to make each plot. If this is not possible for whatever reason, then it should at least contain the plot saved as a ROOT .C macro so that it can be easily changed as necessary.
 
+* Figs. 1 and 2 (PLT sketches): I created these in PowerPoint in PLTSketches.pptx and then saved them to create the two individual PDFs TripleCoincidenceSketch.pdf (Fig. 1) and AccidentalSketch.pdf (Fig. 2).
+
 * Fig. 3 (schematic of PLT readout channels): DrawPLTReadoutChannels.C, a script I created for the paper to improve on the original version (which was just created in PowerPoint)
 
 * Fig. 6 (accidental rates vs. SBIL): PlotAccidentalRatesPaper.C, originally derived from PLTOffline/AccidentalStudies/PlotAccidentalRatesAllScans.C, which uses the data in AccidentalData/. The 2015 data was originally also in PLTOfflineAccidentalStudies, while I had to pull the 2016 data from Joe's directory in /home/jheidema/PLTOffline/AccidentalStudies on pltoffline (this should really be committed at some point). I modified the script so it can run on either 2015 or 2016 depending on the argument; use .x PlotAccidentalRatesPaper.C(0) for 2015 and (1) for 2016.

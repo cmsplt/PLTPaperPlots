@@ -23,11 +23,19 @@ def plotAxVline(intLumi:str, label:str, position:str):
     matplotlib.pyplot.axvline(x=intLumi, color='grey', linestyle='--', alpha=0.4, label=label)
     matplotlib.pyplot.text(x=intLumi+1, y=10, s=label, fontsize=12, rotation=90, verticalalignment=position)
 
+def dateSecondaryAxis(intLumiAx, lumiPerScanDate, dataCh):
+    # Add secondary date axis [https://stackoverflow.com/a/33447004/13019084]
+    dateAx = intLumiAx.twiny()
+    dateAx.set_xlim(intLumiAx.get_xlim()) # set same range as intLumi axis
+    dateAx.set_xticks(lumiPerScanDate) # copy location of intLumi x-ticks
+    dateAx.set_xticklabels(dataCh.index.to_series().dt.strftime("%Y-%m-%d").to_list(), horizontalalignment='left') # draw them as the date!
+    dateAx.tick_params(axis='x', labelrotation=45, labelsize=10)
+    _ = [label.set_visible(False) for label in dateAx.get_xaxis().get_ticklabels()[1::2]] # print every second xticklabel starting with the first [https://stackoverflow.com/a/50034357/13019084]
+
 def plotDeplVolt(ch:int):
     # plot depletion voltage vs time for channel 'ch'
     deplVolt = loadDepletionVoltageJSON()
     dataCh = deplVolt[ch][deplVolt[ch] != 0] # depletion voltage dataframe (drop entries where depletion voltage == 0 )
-    dataChDate = dataCh.index.to_series().dt.strftime("%Y-%m-%d").to_list() # to_series() required to do things to a DatetimeIndex [https://stackoverflow.com/a/49277956/13019084]
     lumiByDaySeries = lumiByDay()
     lumiPerScanDate = [lumiByDaySeries[pandas.to_datetime(scan.date())] for scan in dataCh.index.to_list()] # Run2 cumulativeIntLumi for each scan date
     fig, intLumiAx = matplotlib.pyplot.subplots(figsize=(10, 6))
@@ -35,20 +43,11 @@ def plotDeplVolt(ch:int):
     intLumiAx.set_title(label=f'Ch{ch} Depletion Voltage vs Integrated Luminosity', fontsize=20)
     matplotlib.pyplot.xlabel(xlabel='Integrated Luminosity (1/fb)', fontsize=16)
     matplotlib.pyplot.ylabel(ylabel='Depletion Voltage (V)', fontsize=16)
-    matplotlib.pyplot.text(x=0.01, y=0.99, transform=intLumiAx.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=12)
-    intLumiAx.axes.set_ylim(0.0, 800.0)
-    intLumiAx.axes.set_xlim(0.0, 165.0)
     matplotlib.pyplot.xticks(fontsize=12)
     matplotlib.pyplot.yticks(fontsize=12)
-    def dateSecondaryAxis():
-        # Add secondary date axis [https://stackoverflow.com/a/33447004/13019084]
-        dateAx = intLumiAx.twiny()
-        dateAx.set_xlim(intLumiAx.get_xlim()) # set same range as intLumi axis
-        dateAx.set_xticks(lumiPerScanDate) # copy location of intLumi x-ticks
-        dateAx.set_xticklabels(dataChDate, horizontalalignment='left') # draw them as the date!
-        dateAx.tick_params(axis='x', labelrotation=45, labelsize=10)
-        [label.set_visible(False) for label in dateAx.get_xaxis().get_ticklabels()[1::2]]
-            # print every second xticklabel starting with the first [https://stackoverflow.com/a/50034357/13019084]
+    matplotlib.pyplot.text(x=0.01, y=0.99, transform=intLumiAx.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=16)
+    intLumiAx.axes.set_ylim(0.0, 800.0)
+    intLumiAx.axes.set_xlim(0.0, 165.0)
     # dateSecondaryAxis()
     hvSetPoints = {'2016-09-09 16:10':'200V', '2017-08-10 01:10':'300V', '2017-10-18 21:00':'400V', '2018-03-22 17:45':'500V', '2018-06-10 04:50':'800V', '2018-08-18 04:35':'VcThr'}
         # 200:[http://cmsonline.cern.ch/cms-elog/948105]  250:[http://cmsonline.cern.ch/cms-elog/1002826] 300:[http://cmsonline.cern.ch/cms-elog/1003149]

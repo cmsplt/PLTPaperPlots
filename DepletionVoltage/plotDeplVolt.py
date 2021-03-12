@@ -3,7 +3,8 @@
 import os, sys, pandas, json, matplotlib.pyplot
 
 def loadDepletionVoltageJSON() -> pandas.DataFrame:
-    with open(f'depletionVoltage.json', 'r') as deplVoltFile: deplVolt = json.load(deplVoltFile)
+    # load json file with depletion voltage values
+    with open('depletionVoltage.json', 'r') as deplVoltFile: deplVolt = json.load(deplVoltFile)
     deplVolt = pandas.DataFrame.from_dict(deplVolt).T
     deplVolt.index = [fname.split('/')[1].lstrip('Scan_').rstrip('.txt') for fname in deplVolt.index.to_list()]
     deplVolt.index = pandas.to_datetime(deplVolt.index, format = '%Y_%m_%d_%H_%M_%S')
@@ -18,10 +19,10 @@ def lumiByDay() -> pandas.DataFrame:
     cumulativeIntLumi = lumiByDayRun2['Delivered(/ub)'].cumsum().divide(10**9).rename('Delivered(/fb)')
     return pandas.concat([date, cumulativeIntLumi], axis=1).set_index('Date')['Delivered(/fb)']
 
-def plotAxVline(intLumi:str, label:str, position:str):
+def plotAxVline(intLumi:str, label:str, fontsize=int, position:str='bottom'):
     # add vertical line at the specified intLumi (given by lumiByDay)
     matplotlib.pyplot.axvline(x=intLumi, color='grey', linestyle='--', alpha=0.4, label=label)
-    matplotlib.pyplot.text(x=intLumi+1, y=10, s=label, fontsize=12, rotation=90, verticalalignment=position)
+    matplotlib.pyplot.text(x=intLumi+1, y=10, s=label, fontsize=fontsize, rotation=90, verticalalignment=position)
 
 def dateSecondaryAxis(intLumiAx, lumiPerScanDate, dataCh):
     # Add secondary date axis [https://stackoverflow.com/a/33447004/13019084]
@@ -38,14 +39,15 @@ def plotDeplVolt(ch:int):
     dataCh = deplVolt[ch][deplVolt[ch] != 0] # depletion voltage dataframe (drop entries where depletion voltage == 0 )
     lumiByDaySeries = lumiByDay()
     lumiPerScanDate = [lumiByDaySeries[pandas.to_datetime(scan.date())] for scan in dataCh.index.to_list()] # Run2 cumulativeIntLumi for each scan date
-    fig, intLumiAx = matplotlib.pyplot.subplots(figsize=(10, 6))
-    intLumiAx.scatter(x=lumiPerScanDate, y=dataCh.to_list())
+    (fig, intLumiAx) = matplotlib.pyplot.subplots(figsize=(10, 6))
+    (fontsize, markersize) = 12, 40
+    intLumiAx.scatter(x=lumiPerScanDate, y=dataCh.to_list(), s=markersize)
     intLumiAx.set_title(label=f'Ch{ch} Depletion Voltage vs Integrated Luminosity', fontsize=20)
-    matplotlib.pyplot.xlabel(xlabel='Integrated Luminosity (1/fb)', fontsize=16)
-    matplotlib.pyplot.ylabel(ylabel='Depletion Voltage (V)', fontsize=16)
-    matplotlib.pyplot.xticks(fontsize=12)
-    matplotlib.pyplot.yticks(fontsize=12)
-    matplotlib.pyplot.text(x=0.01, y=0.99, transform=intLumiAx.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=16)
+    matplotlib.pyplot.xlabel(xlabel='Integrated Luminosity (1/fb)', fontsize=fontsize)
+    matplotlib.pyplot.ylabel(ylabel='Depletion Voltage (V)', fontsize=fontsize)
+    matplotlib.pyplot.xticks(fontsize=fontsize)
+    matplotlib.pyplot.yticks(fontsize=fontsize)
+    matplotlib.pyplot.text(x=0.01, y=0.99, transform=intLumiAx.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=fontsize)
     intLumiAx.axes.set_ylim(0.0, 800.0)
     intLumiAx.axes.set_xlim(0.0, 165.0)
     # dateSecondaryAxis()
@@ -53,11 +55,14 @@ def plotDeplVolt(ch:int):
         # 200:[http://cmsonline.cern.ch/cms-elog/948105]  250:[http://cmsonline.cern.ch/cms-elog/1002826] 300:[http://cmsonline.cern.ch/cms-elog/1003149]
         # 350:[http://cmsonline.cern.ch/cms-elog/1015071] 400:[http://cmsonline.cern.ch/cms-elog/1016344] 800:[http://cmsonline.cern.ch/cms-elog/1047254]
         # VcThr:[http://cmsonline.cern.ch/cms-elog/1058918]
-    _ = [plotAxVline(lumiByDaySeries[f'{pandas.to_datetime(date).date()}'], hv, 'bottom') for date,hv in hvSetPoints.items()]
+    _ = [plotAxVline(lumiByDaySeries[f'{pandas.to_datetime(date).date()}'], hv, fontsize) for date,hv in hvSetPoints.items()]
     matplotlib.pyplot.tight_layout()
-    matplotlib.pyplot.show()
-    # matplotlib.pyplot.savefig(f'ch{ch}DepletionVoltage.png', dpi=300)
-    # matplotlib.pyplot.close('all')
+    # matplotlib.pyplot.show()
+    matplotlib.pyplot.savefig(f'ch{ch}DepletionVoltage.png', dpi=300)
+    matplotlib.pyplot.close('all')
 
-plotDeplVolt(10)
-# _ = [plotDeplVolt(ch) for ch in range(16)]
+def main():
+    _ = [plotDeplVolt(ch) for ch in range(16)]
+
+if __name__== "__main__":
+    main()

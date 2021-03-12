@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, sys, typing, pandas, matplotlib.pyplot
+import os, sys, typing, pandas, pathlib, matplotlib.pyplot
 
 def parseLogFile(logFile:str) -> pandas.DataFrame:
     # Define column headers and load log file into a pandas dataframe (only keep lines matching "#M")
@@ -66,38 +66,42 @@ def calculateDeplVolt(logData:pandas.DataFrame, ch:int, thr1:float=0.01, thr2:fl
     chData  = processChannel(logData, ch)[::-1] # reverse order of scan points (from highest to lowest)
     pctP1 = chData[f'medianRateN{ch}'].pct_change(periods=1).abs()
     pctP2 = chData[f'medianRateN{ch}'].pct_change(periods=2).abs()
-    deplVolt = chData[(pctP1>thr1) & (pctP2>thr2)]['hv'].iloc[0]
-    if deplVolt: deplVoltStDev = chData[chData['hv'] > deplVolt]['medianRateN10'].std()
-    else: deplVolt = 0
+    plateau = chData[(pctP1>thr1) & (pctP2>thr2)]['hv']
+    deplVolt = plateau.iloc[0] if not plateau.empty else 0
+    deplVoltStDev = chData[chData['hv'] > deplVolt][f'medianRateN{ch}'].std() # st dev of rates for hv above the calculated depl volt
     return deplVolt
 
 def plotChannel(chData:pandas.DataFrame, ch:int, deplVolt:float, date:str):
     # plot rate (raw and normalized) vs HV
     scale = chData[f'medianRateN{ch}'].max() / chData[f'medianRate{ch}'].max()
-    fig, ax = matplotlib.pyplot.subplots(figsize=(10, 6))
-    # matplotlib.pyplot.style.use('seaborn-white')
+    (fig, ax) = matplotlib.pyplot.subplots(figsize=(10, 6))
+    (fontsize, markersize) = 12, 8
     ax.set_title(label=f'Ch{ch} rate vs HV ({date})', fontsize=20)
-    ax.set_xlabel(xlabel='HV setpoint (V)', fontsize=16)
-    ax.set_ylabel(ylabel='Raw inst. lumi rate', fontsize=16)
-    matplotlib.pyplot.xticks(fontsize=12)
-    matplotlib.pyplot.yticks(fontsize=12)
-    matplotlib.pyplot.text(x=0.01, y=0.99, transform=ax.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=16)
-    ax.errorbar(x=chData['hv'], y=chData[f'medianRateN{ch}'], yerr=chData[f'stdevRateN{ch}'], ls='', marker='o', markersize='4', label='PLT/HF')
-    ax.errorbar(x=chData['hv'], y=chData[f'medianRate{ch}']*scale, yerr=chData[f'stdevRate{ch}']*scale, ls='', marker='o', markersize='4', label='PLT')
-    ax.legend(loc='lower right', borderpad=0.1, labelspacing=0.1, fancybox=True, framealpha=0.4)
+    ax.set_xlabel(xlabel='HV setpoint (V)', fontsize=fontsize)
+    ax.set_ylabel(ylabel='Raw inst. lumi rate', fontsize=fontsize)
+    matplotlib.pyplot.xticks(fontsize=fontsize)
+    matplotlib.pyplot.yticks(fontsize=fontsize)
+    matplotlib.pyplot.text(x=0.01, y=0.99, transform=ax.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=fontsize)
+    ax.errorbar(x=chData['hv'], y=chData[f'medianRateN{ch}'], yerr=chData[f'stdevRateN{ch}'], ls='', marker='o', markersize=markersize, label='PLT/HF')
+    ax.errorbar(x=chData['hv'], y=chData[f'medianRate{ch}']*scale, yerr=chData[f'stdevRate{ch}']*scale, ls='', marker='o', markersize=markersize, label='PLT')
+    ax.legend(loc='lower right', borderpad=0.1, labelspacing=0.1, fancybox=True, framealpha=0.4, fontsize=fontsize)
     ax.axvline(deplVolt, color='red')
     fig.tight_layout()
-    matplotlib.pyplot.show()
-    # os.makedirs(f'{date}/', exist_ok=True)
-    # fig.savefig(f'{date}/{date}.ch{ch}.png', dpi=300)
-    # matplotlib.pyplot.close('all')
+    # matplotlib.pyplot.show()
+    os.makedirs(f'{date}/', exist_ok=True)
+    fig.savefig(f'{date}/{date}.ch{ch}.png', dpi=300)
+    matplotlib.pyplot.close('all')
 
 def main():
-    logFile='/tmp/Scan_2018_08_23_14_35_41.txt'
-    logData = parseLogFile(logFile)
-    logData = mergeDF(logData)
-    date = logData.timestamp.iloc[0].strftime('%Y-%m-%d')
-    for ch in range(16):
-        chData = processChannel(logData, ch)
-        deplVolt = calculateDeplVolt(logData, ch, 0.01, 0.02)
-        plotChannel(chData, ch, deplVolt, date)
+    for logFile in sorted(pathlib.Path.cwd().glob('scanLogs/*txt')):
+        print(f'processing {logFile.name}...')
+        logData = parseLogFile(logFile)
+        logData = mergeDF(logData)
+        date = logData.timestamp.iloc[0].strftime('%Y-%m-%d')
+        for ch in range(16):
+            chData = processChannel(logData, ch)
+            deplVolt = calculateDeplVolt(logData, ch, 0.01, 0.02)
+            plotChannel(chData, ch, deplVolt, date)
+
+if __name__== "__main__":
+    main()

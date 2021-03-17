@@ -51,7 +51,7 @@ def plotDeplVolt(ch:int):
     intLumiAx.axes.set_ylim(0.0, 800.0)
     intLumiAx.axes.set_xlim(0.0, 165.0)
     # dateSecondaryAxis()
-    hvSetPoints = {'2016-09-09 16:10':'200V', '2017-08-10 01:10':'300V', '2017-10-18 21:00':'400V', '2018-03-22 17:45':'500V', '2018-06-10 04:50':'800V', '2018-08-18 04:35':'VcThr'}
+    hvSetPoints = {'2015-05-01':'150V','2016-09-09 16:10':'200V', '2017-08-10 01:10':'300V', '2017-10-18 21:00':'400V', '2018-03-22 17:45':'500V', '2018-06-10 04:50':'800V', '2018-08-18 04:35':'VcThr'}
         # 200:[http://cmsonline.cern.ch/cms-elog/948105]  250:[http://cmsonline.cern.ch/cms-elog/1002826] 300:[http://cmsonline.cern.ch/cms-elog/1003149]
         # 350:[http://cmsonline.cern.ch/cms-elog/1015071] 400:[http://cmsonline.cern.ch/cms-elog/1016344] 800:[http://cmsonline.cern.ch/cms-elog/1047254]
         # VcThr:[http://cmsonline.cern.ch/cms-elog/1058918]

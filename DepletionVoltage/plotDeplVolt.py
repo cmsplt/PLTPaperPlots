@@ -1,47 +1,47 @@
 #!/usr/bin/env python3
 
-import os, sys, pandas, json, matplotlib.pyplot
+import os, sys, typing, pandas, json, matplotlib.pyplot
 
-def loadDepletionVoltageJSON() -> pandas.DataFrame:
+def loadDeplVolt() -> pandas.DataFrame:
     # load json file with depletion voltage values
-    with open('depletionVoltage.json', 'r') as deplVoltFile: deplVolt = json.load(deplVoltFile)
-    deplVolt = pandas.DataFrame.from_dict(deplVolt).T
+    with open('depletionVoltage.json', 'r') as deplVoltFile:
+        deplVolt = pandas.DataFrame.from_dict(json.load(deplVoltFile)).T
     deplVolt.index = [fname.split('/')[1].lstrip('Scan_').rstrip('.txt') for fname in deplVolt.index.to_list()]
-    deplVolt.index = pandas.to_datetime(deplVolt.index, format = '%Y_%m_%d_%H_%M_%S')
+    deplVolt.index = pandas.to_datetime(deplVolt.index, format='%Y_%m_%d_%H_%M_%S')
     return deplVolt
 
-def lumiByDay() -> pandas.DataFrame:
+def intLumiByDate() -> pandas.DataFrame:
     # return dataframe Run2 cumulative integrated lumi (in 1/fb) with the date as index
     file='lumiByDay.csv' if os.path.exists('lumiByDay.csv') else 'https://cern.ch/cmslumi/publicplots/lumiByDay.csv'
     lumiByDay = pandas.read_csv(file)
-    lumiByDayRun2 = lumiByDay[lumiByDay.Date >= '2015'] # LHC Run2
-    date = pandas.to_datetime(lumiByDayRun2.Date, format = '%Y-%m-%d')
-    cumulativeIntLumi = lumiByDayRun2['Delivered(/ub)'].cumsum().divide(10**9).rename('Delivered(/fb)')
-    return pandas.concat([date, cumulativeIntLumi], axis=1).set_index('Date')['Delivered(/fb)']
+    lumiByDay = lumiByDay[lumiByDay.Date >= '2015'] # LHC Run2
+    lumiByDay.Date = pandas.to_datetime(lumiByDay.Date, format='%Y-%m-%d')
+    lumiByDay['IntLumi(/fb)'] = lumiByDay['Delivered(/ub)'].cumsum().divide(10**9)
+    return lumiByDay[['Date','IntLumi(/fb)']].set_index('Date')
 
-def plotAxVline(intLumi:str, label:str, fontsize=int, position:str='bottom'):
-    # add vertical line at the specified intLumi (given by lumiByDay)
+def plotAxVline(intLumi:str, intLumiAx:matplotlib.axes.Axes, label:str, fontsize=int, position:str='top'):
+    # add vertical line at the specified intLumi (given by intLumiByDate())
     matplotlib.pyplot.axvline(x=intLumi, color='grey', linestyle='--', alpha=0.4, label=label)
-    matplotlib.pyplot.text(x=intLumi+1, y=10, s=label, fontsize=fontsize, rotation=90, verticalalignment=position)
+    matplotlib.pyplot.text(x=(intLumi+1)/intLumiAx.get_xlim()[1], y=0.95, s=label, fontsize=fontsize, rotation=90, verticalalignment=position, transform=intLumiAx.transAxes)
 
-def dateSecondaryAxis(intLumiAx, lumiPerScanDate, dataCh):
+def dateSecondaryAxis(intLumiAx:matplotlib.axes.Axes, lumiAtScanDate:typing.List[float], dataCh:pandas.Series):
     # Add secondary date axis [https://stackoverflow.com/a/33447004/13019084]
     dateAx = intLumiAx.twiny()
     dateAx.set_xlim(intLumiAx.get_xlim()) # set same range as intLumi axis
-    dateAx.set_xticks(lumiPerScanDate) # copy location of intLumi x-ticks
+    dateAx.set_xticks(lumiAtScanDate) # copy location of intLumi x-ticks
     dateAx.set_xticklabels(dataCh.index.to_series().dt.strftime("%Y-%m-%d").to_list(), horizontalalignment='left') # draw them as the date!
     dateAx.tick_params(axis='x', labelrotation=45, labelsize=10)
     _ = [label.set_visible(False) for label in dateAx.get_xaxis().get_ticklabels()[1::2]] # print every second xticklabel starting with the first [https://stackoverflow.com/a/50034357/13019084]
 
 def plotDeplVolt(ch:int):
     # plot depletion voltage vs time for channel 'ch'
-    deplVolt = loadDepletionVoltageJSON()
+    deplVolt = loadDeplVolt()
     dataCh = deplVolt[ch][deplVolt[ch] != 0] # depletion voltage dataframe (drop entries where depletion voltage == 0 )
-    lumiByDaySeries = lumiByDay()
-    lumiPerScanDate = [lumiByDaySeries[pandas.to_datetime(scan.date())] for scan in dataCh.index.to_list()] # Run2 cumulativeIntLumi for each scan date
+    intLumi = intLumiByDate()
+    lumiAtScanDate = [intLumi.loc[scan.date()].values[0] for scan in dataCh.index] # Run2 IntLumi for each scan date
     (fig, intLumiAx) = matplotlib.pyplot.subplots(figsize=(10, 6))
     (fontsize, markersize) = 12, 40
-    intLumiAx.scatter(x=lumiPerScanDate, y=dataCh.to_list(), s=markersize)
+    intLumiAx.scatter(x=lumiAtScanDate, y=dataCh.to_list(), s=markersize)
     intLumiAx.set_title(label=f'Ch{ch} Depletion Voltage vs Integrated Luminosity', fontsize=20)
     matplotlib.pyplot.xlabel(xlabel='Integrated Luminosity (1/fb)', fontsize=fontsize)
     matplotlib.pyplot.ylabel(ylabel='Depletion Voltage (V)', fontsize=fontsize)
@@ -55,7 +55,7 @@ def plotDeplVolt(ch:int):
         # 200:[http://cmsonline.cern.ch/cms-elog/948105]  250:[http://cmsonline.cern.ch/cms-elog/1002826] 300:[http://cmsonline.cern.ch/cms-elog/1003149]
         # 350:[http://cmsonline.cern.ch/cms-elog/1015071] 400:[http://cmsonline.cern.ch/cms-elog/1016344] 800:[http://cmsonline.cern.ch/cms-elog/1047254]
         # VcThr:[http://cmsonline.cern.ch/cms-elog/1058918]
-    _ = [plotAxVline(lumiByDaySeries[f'{pandas.to_datetime(date).date()}'], hv, fontsize) for date,hv in hvSetPoints.items()]
+    _ = [plotAxVline(intLumi.loc[pandas.to_datetime(date).date()].values[0], intLumiAx, hv, fontsize) for date,hv in hvSetPoints.items()]
     matplotlib.pyplot.tight_layout()
     # matplotlib.pyplot.show()
     matplotlib.pyplot.savefig(f'ch{ch}DepletionVoltage.png', dpi=300)

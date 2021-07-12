@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, sys, typing, pandas, pathlib, matplotlib.pyplot
+import os, sys, typing, mplhep, pandas, pathlib, matplotlib.pyplot
 
 def parseLogFile(logFile:str) -> pandas.DataFrame:
     # Define column headers and load log file into a pandas dataframe (only keep lines matching "#M")
@@ -74,17 +74,19 @@ def calculateDeplVolt(logData:pandas.DataFrame, ch:int, thr1:float=0.01, thr2:fl
 def plotChannel(chData:pandas.DataFrame, ch:int, deplVolt:float, date:str):
     # plot rate (raw and normalized) vs HV
     scale = chData[f'medianRateN{ch}'].max() / chData[f'medianRate{ch}'].max()
+    mplhep.style.use('CMS')
     (fig, ax) = matplotlib.pyplot.subplots(figsize=(10, 6))
-    (fontsize, markersize) = 12, 8
-    ax.set_title(label=f'Ch{ch} rate vs HV ({date})', fontsize=20)
-    ax.set_xlabel(xlabel='HV setpoint (V)', fontsize=fontsize)
-    ax.set_ylabel(ylabel='Raw inst. lumi rate', fontsize=fontsize)
-    matplotlib.pyplot.xticks(fontsize=fontsize)
-    matplotlib.pyplot.yticks(fontsize=fontsize)
-    matplotlib.pyplot.text(x=0.01, y=0.99, transform=ax.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=fontsize)
-    ax.errorbar(x=chData['hv'], y=chData[f'medianRateN{ch}'], yerr=chData[f'stdevRateN{ch}'], ls='', marker='o', markersize=markersize, label='PLT/HF')
-    ax.errorbar(x=chData['hv'], y=chData[f'medianRate{ch}']*scale, yerr=chData[f'stdevRate{ch}']*scale, ls='', marker='o', markersize=markersize, label='PLT')
-    ax.legend(loc='lower right', borderpad=0.1, labelspacing=0.1, fancybox=True, framealpha=0.4, fontsize=fontsize)
+    # (fontsize, markersize) = 12, 8
+    ax.set_title(label=f'Ch{ch} rate vs HV ({date})') # fontsize=20
+    ax.set_xlabel(xlabel='HV setpoint (V)') # fontsize=fontsize
+    ax.set_ylabel(ylabel='Counts per lumisection') # fontsize=fontsize
+    # matplotlib.pyplot.xticks(fontsize=fontsize)
+    # matplotlib.pyplot.yticks(fontsize=fontsize)
+    # matplotlib.pyplot.text(x=0.01, y=0.99, transform=ax.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=fontsize)
+    mplhep.cms.text('Preliminary', loc=1);
+    ax.errorbar(x=chData['hv'], y=chData[f'medianRateN{ch}'], yerr=chData[f'stdevRateN{ch}'], ls='', marker='o', label='PLT/HF') # markersize=markersize
+    ax.errorbar(x=chData['hv'], y=chData[f'medianRate{ch}']*scale, yerr=chData[f'stdevRate{ch}']*scale, ls='', marker='o', label='PLT') # # markersize=markersize
+    ax.legend(loc='lower right', borderpad=0.1, labelspacing=0.1, fancybox=True, framealpha=0.4) # fontsize=fontsize
     ax.axvline(deplVolt, color='red')
     fig.tight_layout()
     # matplotlib.pyplot.show()

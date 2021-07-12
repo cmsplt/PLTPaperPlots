@@ -53,6 +53,10 @@ void PlotAlignment4444Paper(void) {
   h1->GetYaxis()->SetTitleOffset(2.4);
   h1->GetXaxis()->SetRangeUser(-0.4, 0.4);
   h1->SetStats(0);
+  // get the fit line so we can modify it
+  TF1 *f1 = h1->GetFunction("pol1");
+  f1->SetLineWidth(1);
+  f1->SetLineColor(kBlue);
   h1->Draw();
 
   TText *t1 = new TText(0, 0, "CMS");
@@ -86,6 +90,9 @@ void PlotAlignment4444Paper(void) {
   h2->GetYaxis()->SetTitleOffset(2.4);
   h2->GetXaxis()->SetRangeUser(-0.4, 0.4);
   h2->SetStats(0);
+  TF1 *f2 = h2->GetFunction("pol1");
+  f2->SetLineWidth(1);
+  f2->SetLineColor(kBlue);
   h2->Draw();
 
   t1->Draw();

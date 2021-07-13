@@ -19,10 +19,10 @@ def intLumiByDate() -> pandas.DataFrame:
     lumiByDay['IntLumi(/fb)'] = lumiByDay['Delivered(/ub)'].cumsum().divide(10**9)
     return lumiByDay[['Date','IntLumi(/fb)']].set_index('Date')
 
-def plotAxVline(intLumi:str, intLumiAx:matplotlib.axes.Axes, label:str, fontsize:int=14, position:str='top'):
+def plotAxVline(intLumi:str, intLumiAx:matplotlib.axes.Axes, label:str, fontsize:int=14, position:str='bottom'):
     # add vertical line at the specified intLumi (given by intLumiByDate())
     matplotlib.pyplot.axvline(x=intLumi, color='grey', linestyle='--', alpha=0.4, label=label)
-    matplotlib.pyplot.text(x=(intLumi+1)/intLumiAx.get_xlim()[1], y=0.18, s=label, color='grey', rotation=90, fontsize=fontsize, verticalalignment=position, transform=intLumiAx.transAxes)
+    matplotlib.pyplot.text(x=(intLumi+1)/intLumiAx.get_xlim()[1], y=0.05, s=label, color='grey', rotation=90, fontsize=fontsize, verticalalignment=position, transform=intLumiAx.transAxes)
 
 def dateSecondaryAxis(intLumiAx:matplotlib.axes.Axes, lumiAtScanDate:typing.List[float], dataCh:pandas.Series):
     # Add secondary date axis [https://stackoverflow.com/a/33447004/13019084]
@@ -53,7 +53,7 @@ def plotDeplVolt(ch:int):
     intLumiAx.axes.set_ylim(0.0, 800.0)
     intLumiAx.axes.set_xlim(0.0, 165.0)
     # dateSecondaryAxis()
-    hvSetPoints = {'2015-05-01':'150V','2016-09-09 16:10':'200V', '2017-08-10 01:10':'300V', '2017-10-18 21:00':'400V', '2018-03-22 17:45':'500V', '2018-06-10 04:50':'800V', '2018-08-18 04:35':'VcThr'}
+    hvSetPoints = {'2015-05-01':'150V','2016-09-09 16:10':'200V', '2017-08-10 01:10':'300V', '2017-10-18 21:00':'400V', '2018-03-22 17:45':'500V', '2018-06-10 04:50':'800V', '2018-08-18 04:35':r'$\Delta$threshold'}
         # 200:[http://cmsonline.cern.ch/cms-elog/948105]  250:[http://cmsonline.cern.ch/cms-elog/1002826] 300:[http://cmsonline.cern.ch/cms-elog/1003149]
         # 350:[http://cmsonline.cern.ch/cms-elog/1015071] 400:[http://cmsonline.cern.ch/cms-elog/1016344] 800:[http://cmsonline.cern.ch/cms-elog/1047254]
         # VcThr:[http://cmsonline.cern.ch/cms-elog/1058918]

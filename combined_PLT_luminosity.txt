@@ -1,0 +1,32 @@
+# This input file can be used to compute the total luminosity uncertainty, using the script Normtags/Scripts/combineYears.py,
+# for the PLT.
+# The normalization uncertainties are the same as for the regular combination file, using the results from the luminosity paper 
+# LUM-17-003 for 2015/16, and the preliminary results LUM-17-004 and LUM-18-002 for 2017 and 2018, respectively,
+# using the correlation scheme described in the paper.
+# The stability and linearity uncertainties, however, are replaced by the PLT-specific numbers shown in the paper.
+
+Description,                   Corr,2015,2016,2017,2018
+# Pick one of these lines -- top is delivered, middle is recorded with nonlegacy golden JSON, bottom is recorded with legacy golden JSON
+#Luminosity,                    -,   4.13,41.58,49.79,67.86
+#Luminosity,                    -,   2.27,36.29,41.53,59.74
+Luminosity,                    -,    2.27,16.1,41.48,59.83
+
+# Normalization
+X-Y factorization,             C,   0.5, 0.5, 0.8, 2.0
+Length scale,                  C,   0.2, 0.3, 0.3, 0.2
+Orbit drift Syst,              C,   0.8, 0.5, 0.0, 0.0
+Orbit drift Rand,              U,   0.2, 0.1, 0.2, 0.1
+Beam-beam effects (15-16),     C,   0.5, 0.5, 0.0, 0.0
+Beam-beam effects (17-18),     C,   0.0, 0.0, 0.6, 0.2
+Beam current calibration,      C,   0.2, 0.2, 0.3, 0.2
+Ghosts and satellites,         C,   0.1, 0.1, 0.1, 0.1
+Scan to scan variation,        U,   0.5, 0.2, 0.9, 0.3
+Bunch to bunch variation,      U,   0.0, 0.0, 0.1, 0.1
+Cross-detector consistency,    U,   0.0, 0.0, 0.6, 0.5
+Background subtraction,        U,   0.0, 0.0, 0.0, 0.1
+
+# Integration
+Cross-detector stability,      U,   3.0, 0.9, 1.3, 1.0
+Cross-detector linearity,      C,   1.8, 0.8, 1.4, 1.5
+CMS deadtime,                  U,   0.5, 0.1, 0.5, 0.1
+

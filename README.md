@@ -19,8 +19,8 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Fig. 23 (background measurement): PlotBackgroundStudies.C. This is currently a straight copy of the script and data in PLTOffline/BackgroundStudies; see that directory for further documentation.
 
-* Fig. 28 (PLT/RAMSES corrections for 2016): PlotRAMSESCorrectionsPaper.C, created for the paper to plot the data from David's spreadsheet (pltramseslin.xlsx) which I have extracted the two relevant csv files from (pltramses2016ratio.csv and pltramses2016slope.csv).
+* Fig. 28 (ML using occupancy maps): These are the MLOccupancy* files. These consist of the original PDF and PNG from Peter (although I don't actually have the macros).
 
-* Plots for ML using occupancy maps (not yet in paper but will be added soon): These are the MLOccupancy* files. These consist of the original PDF and PNG from Peter (although I don't actually have the macros).
+* Fig. 29 (PLT/RAMSES corrections for 2016): PlotRAMSESCorrectionsPaper.C, created for the paper to plot the data from David's spreadsheet (pltramseslin.xlsx) which I have extracted the two relevant csv files from (pltramses2016ratio.csv and pltramses2016slope.csv).
 
 * To calculate the combined uncertainty on the luminosity, use the file combined_PLT_luminosity.txt with the script Normtags/Scripts/combineYears.py. This contains the necessary uncertainties to compute the combined value.

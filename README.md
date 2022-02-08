@@ -17,7 +17,11 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Fig. 16 (2015 alignment over time): Alignment/PlotAlignmentVsTimePaper.C, originally derived from PLTOffline/plotScripts/PlotAlignmentVsTime.C, which uses the alignment data in Alignment2015/, originally from PLTOffline/ALIGNMENT.
 
-* *Fig. 22 (pulse heights vs. integrated luminosity)*: PulseHeights/ph_ch*_roc?.{pdf,gif}. Only files, still need to get the macros from Francesco.
+* *Fig. 20 (pulse height stability)*: PulseHeights/ph_stability.*. Only plots, still need to get the macros from Francesco.
+
+* *Fig. 21 (pulse heights triple coincidence and timewalk)*: PulseHeights/ph_triple_coincidence_7117.* and PulseHeights/ph_timewalk.*. Only plots, still need to get the macros.
+
+* *Fig. 22 (pulse heights vs. integrated luminosity)*: PulseHeights/ph_ch*_roc?.{pdf,gif}. Only plots, still need to get the macros.
 
 * Fig. 23 (background measurement): PLTBackground/PlotBackgroundStudies.C. This is currently a straight copy of the script and data in PLTOffline/BackgroundStudies; see that directory for further documentation.
 

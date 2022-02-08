@@ -13,13 +13,13 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Figs. 12 and 13 (track luminosity VdM results): TrackLumi/PlotTrackLumiVdMPaper.C, originally derived from PLTOffline/TrackLumi2020/PlotTrackLumiVdM.C, which uses the data in TrackLumi/TrackLumiData/ for fill 6016, also originally from the same directory.
 
-* Fig. 15 (sample alignment procedure): PlotAlignment4444Paper.C, which takes the histograms produced by CalculateAlignment stored in the ROOT file alignment_4444_30M.root and formats them nicely. See the script for details on how the ROOT file is generated.
+* Fig. 15 (sample alignment procedure): Alignment/PlotAlignment4444Paper.C, which takes the histograms produced by CalculateAlignment stored in the ROOT file alignment_4444_30M.root and formats them nicely. See the script for details on how the ROOT file is generated.
 
-* Fig. 16 (2015 alignment over time): PlotAlignmentVsTimePaper.C, originally derived from PLTOffline/plotScripts/PlotAlignmentVsTime.C, which uses the alignment data in Alignment2015/, originally from PLTOffline/ALIGNMENT.
+* Fig. 16 (2015 alignment over time): Alignment/PlotAlignmentVsTimePaper.C, originally derived from PLTOffline/plotScripts/PlotAlignmentVsTime.C, which uses the alignment data in Alignment2015/, originally from PLTOffline/ALIGNMENT.
 
 * *Fig. 22 (pulse heights vs. integrated luminosity)*: PulseHeights/ph_ch*_roc?.{pdf,gif}. Only files, still need to get the macros from Francesco.
 
-* Fig. 23 (background measurement): PlotBackgroundStudies.C. This is currently a straight copy of the script and data in PLTOffline/BackgroundStudies; see that directory for further documentation.
+* Fig. 23 (background measurement): PLTBackground/PlotBackgroundStudies.C. This is currently a straight copy of the script and data in PLTOffline/BackgroundStudies; see that directory for further documentation.
 
 * *Fig. 28 (ML using occupancy maps)*: These plots are in MLOccupancy/. These consist of the original PDF and PNG from Peter; I don't have the macros for these.
 

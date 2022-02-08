@@ -25,6 +25,10 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Fig. 23 (background measurement): PLTBackground/PlotBackgroundStudies.C. This is currently a straight copy of the script and data in PLTOffline/BackgroundStudies; see that directory for further documentation.
 
+* *Fig. 24 (high-pileup ratios vs. SBIL)*: HighPileup/SBIL_7358_plt_13_hfocbx_*. Only plots from Javier.
+
+* *Fig. 25 (high-pileup slope vs. BCID)*: HighPileup/slope_dependence_bxid_Q4_7358.*. Only plots from Javier.
+
 * *Fig. 28 (ML using occupancy maps)*: These plots are in MLOccupancy/. These consist of the original PDF and PNG from Peter; I don't have the macros for these.
 
 * Fig. 29 (PLT/RAMSES corrections for 2016): PLTRamsesComparison/PlotRAMSESCorrectionsPaper.C, created for the paper to plot the data from David's spreadsheet (pltramseslin.xlsx) which I have extracted the two relevant csv files from (pltramses2016ratio.csv and pltramses2016slope.csv).

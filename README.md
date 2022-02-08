@@ -37,4 +37,6 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Fig. 29 (PLT/RAMSES corrections for 2016): PLTRamsesComparison/PlotRAMSESCorrectionsPaper.C, created for the paper to plot the data from David's spreadsheet (pltramseslin.xlsx) which I have extracted the two relevant csv files from (pltramses2016ratio.csv and pltramses2016slope.csv).
 
+* Figs. 31 and 32 (cross-luminometer ratio and slope plots): LuminometerComparisons/*. Only plots from Rafael.
+
 * To calculate the combined uncertainty on the luminosity, use the file combined_PLT_luminosity.txt with the script Normtags/Scripts/combineYears.py. This contains the necessary uncertainties to compute the combined value.

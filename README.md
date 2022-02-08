@@ -1,7 +1,7 @@
 # PLTPaperPlots
 A repository for the plotting scripts and data for the PLT paper.
 
-Ideally, this directory should contain the scripts and all necessary data needed to make each plot. If this is not possible for whatever reason, then it should at least contain the plot saved as a ROOT .C macro so that it can be easily changed as necessary.
+Ideally, this directory should contain the scripts and all necessary data needed to make each plot. If this is not possible for whatever reason, then it should at least contain the plot saved as a ROOT .C macro so that it can be easily changed as necessary. In cases where I have only the figures but not the scripts, this is indicated by italics.
 
 * Figs. 1 and 2 (PLT sketches): I created these in PowerPoint in PLTSketches.pptx and then saved them to create the two individual PDFs TripleCoincidenceSketch.pdf (Fig. 1) and AccidentalSketch.pdf (Fig. 2).
 
@@ -17,9 +17,11 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Fig. 16 (2015 alignment over time): PlotAlignmentVsTimePaper.C, originally derived from PLTOffline/plotScripts/PlotAlignmentVsTime.C, which uses the alignment data in Alignment2015/, originally from PLTOffline/ALIGNMENT.
 
+* *Fig. 22 (pulse heights vs. integrated luminosity)''*: ph_ch*_roc?.{pdf,gif}
+
 * Fig. 23 (background measurement): PlotBackgroundStudies.C. This is currently a straight copy of the script and data in PLTOffline/BackgroundStudies; see that directory for further documentation.
 
-* Fig. 28 (ML using occupancy maps): These are the MLOccupancy* files. These consist of the original PDF and PNG from Peter (although I don't actually have the macros).
+* *Fig. 28 (ML using occupancy maps)*: These are the MLOccupancy* files. These consist of the original PDF and PNG from Peter (although I don't actually have the macros).
 
 * Fig. 29 (PLT/RAMSES corrections for 2016): PlotRAMSESCorrectionsPaper.C, created for the paper to plot the data from David's spreadsheet (pltramseslin.xlsx) which I have extracted the two relevant csv files from (pltramses2016ratio.csv and pltramses2016slope.csv).
 

@@ -17,11 +17,11 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Fig. 16 (2015 alignment over time): PlotAlignmentVsTimePaper.C, originally derived from PLTOffline/plotScripts/PlotAlignmentVsTime.C, which uses the alignment data in Alignment2015/, originally from PLTOffline/ALIGNMENT.
 
-* *Fig. 22 (pulse heights vs. integrated luminosity)''*: PulseHeights/ph_ch*_roc?.{pdf,gif}. Only files, still need to get the macros from Francesco.
+* *Fig. 22 (pulse heights vs. integrated luminosity)*: PulseHeights/ph_ch*_roc?.{pdf,gif}. Only files, still need to get the macros from Francesco.
 
 * Fig. 23 (background measurement): PlotBackgroundStudies.C. This is currently a straight copy of the script and data in PLTOffline/BackgroundStudies; see that directory for further documentation.
 
-* *Fig. 28 (ML using occupancy maps)*: These are the MLOccupancy* files. These consist of the original PDF and PNG from Peter (although I don't actually have the macros).
+* *Fig. 28 (ML using occupancy maps)*: These plots are in MLOccupancy/. These consist of the original PDF and PNG from Peter; I don't have the macros for these.
 
 * Fig. 29 (PLT/RAMSES corrections for 2016): PLTRamsesComparison/PlotRAMSESCorrectionsPaper.C, created for the paper to plot the data from David's spreadsheet (pltramseslin.xlsx) which I have extracted the two relevant csv files from (pltramses2016ratio.csv and pltramses2016slope.csv).
 

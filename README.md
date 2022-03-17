@@ -7,7 +7,7 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Fig. 3 (schematic of PLT readout channels): DrawPLTReadoutChannels.C, a script I created for the paper to improve on the original version (which was just created in PowerPoint)
 
-* Fig. 5 (VdM scan curves): VdM/*, plots created by Lizardo using the VdM framework.
+* *Fig. 5 (VdM scan curves)*: VdM/*, plots created by Lizardo using the VdM framework.
 
 * Fig. 6 (accidental rates vs. SBIL): AccidentalRates/PlotAccidentalRatesPaper.C, originally derived from PLTOffline/AccidentalStudies/PlotAccidentalRatesAllScans.C, which uses the data in AccidentalRates/AccidentalData/. The 2015 data was originally also in PLTOfflineAccidentalStudies, while I had to pull the 2016 data from Joe's directory in /home/jheidema/PLTOffline/AccidentalStudies on pltoffline (this should really be committed at some point). I modified the script so it can run on either 2015 or 2016 depending on the argument; use .x PlotAccidentalRatesPaper.C(0) for 2015 and (1) for 2016.
 
@@ -22,6 +22,8 @@ Ideally, this directory should contain the scripts and all necessary data needed
 * Fig. 15 (sample alignment procedure): Alignment/PlotAlignment4444Paper.C, which takes the histograms produced by CalculateAlignment stored in the ROOT file alignment_4444_30M.root and formats them nicely. See the script for details on how the ROOT file is generated.
 
 * Fig. 16 (2015 alignment over time): Alignment/PlotAlignmentVsTimePaper.C, originally derived from PLTOffline/plotScripts/PlotAlignmentVsTime.C, which uses the alignment data in Alignment2015/, originally from PLTOffline/ALIGNMENT.
+
+* Figs. 18 (HV scan results) and 19 (depletion voltage over time): all code and data files in DepletionVoltage/ from Andres.
 
 * *Fig. 20 (pulse height stability)*: PulseHeights/ph_stability.*. Only plots, still need to get the macros from Francesco.
 

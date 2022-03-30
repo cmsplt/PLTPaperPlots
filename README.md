@@ -45,7 +45,7 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * *Fig. 28 (ML using occupancy maps)*: These plots are in MLOccupancy/. These consist of the original PDF and PNG from Peter; I don't have the macros for these.
 
-* Fig. 29 (PLT/RAMSES corrections for 2016): PLTRamsesComparison/PlotRAMSESCorrectionsPaper.C, created for the paper to plot the data from David's spreadsheet (pltramseslin.xlsx) which I have extracted the two relevant csv files from (pltramses2016ratio.csv and pltramses2016slope.csv).
+* Fig. 29 (PLT/RAMSES corrections for 2016): PLTRamsesComparison/PlotRAMSESCorrectionsPaper.C, created for the paper. This uses the data from David's two spreadsheets; the first (pltramseslin.xlsx) includes most of the information but doesn't include the final rescaling to make the efficiency equal to 1 in the VdM fill, so the final efficiency data comes from ForPaper.xlsx. I have extracted the two relevant csv files, pltramses2016ratio.csv and pltramses2016slope.csv, from these.
 
 * *Figs. 31 and 32 (cross-luminometer ratio and slope plots)*: LuminometerComparisons/*. Only plots from Rafael.
 

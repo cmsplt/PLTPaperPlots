@@ -44,6 +44,11 @@ const float ratioFitParams[nPeriods][4] = {{4.387, 23.958, 0.99749, -0.0037736},
 					   {42.863, 46.030, 1.28129725, -0.0081923}};
 
 
+// To account for the fact that the final corrections are scaled to be equal to 1 at the VdM
+// fill, we have to apply a scale factor to the ratio fits in order for them to match properly.
+// (Column K in the original spreadsheet)
+const float ratioFitScaleFactor = 1/0.978594023;
+
 void readCSVFile(std::string fileName, std::vector<double>& iLumi, std::vector<double>& iLumiErr,
 		 std::vector<double>& y, std::vector<double>& yErr, int targetField,
 		 bool hasError, float scaleFactor = 1.0) {
@@ -172,7 +177,7 @@ void PlotRAMSESCorrectionsPaper(void) {
   std::vector<double> ratioXErr;
   std::vector<double> ratioY;
   std::vector<double> ratioYErr;
-  readCSVFile(ratioFileName, ratioX, ratioXErr, ratioY, ratioYErr, 7, false);
+  readCSVFile(ratioFileName, ratioX, ratioXErr, ratioY, ratioYErr, 8, false);
 
   // Plot it. No errors for the ratios.
   TGraph *gratio = new TGraph(ratioX.size(), ratioX.data(), ratioY.data());
@@ -185,7 +190,7 @@ void PlotRAMSESCorrectionsPaper(void) {
   gratio->SetMarkerStyle(kFullCircle);
   gratio->SetMarkerColor(kBlue);
   gratio->SetMarkerSize(1);
-  gratio->GetYaxis()->SetRangeUser(0.88, 1.0);
+  gratio->GetYaxis()->SetRangeUser(0.90, 1.02);
   gratio->GetYaxis()->SetTitleOffset(1.35);
 
   t1->Draw();
@@ -195,8 +200,8 @@ void PlotRAMSESCorrectionsPaper(void) {
   TF1 *ratioFits[nPeriods];
   for (int i=0; i<nPeriods; i++) {
     ratioFits[i] = new TF1("r", "pol1", ratioFitParams[i][0], ratioFitParams[i][1]);
-    ratioFits[i]->SetParameter(0, ratioFitParams[i][2]);
-    ratioFits[i]->SetParameter(1, ratioFitParams[i][3]);
+    ratioFits[i]->SetParameter(0, ratioFitParams[i][2]*ratioFitScaleFactor);
+    ratioFits[i]->SetParameter(1, ratioFitParams[i][3]*ratioFitScaleFactor);
     ratioFits[i]->SetLineColor(kRed);
     ratioFits[i]->SetLineWidth(4);
     ratioFits[i]->Draw("same");

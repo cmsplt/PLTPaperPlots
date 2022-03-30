@@ -240,7 +240,8 @@ void PlotAlignmentVsTimePaper(void) {
     c[nScope]->Divide(2, 1);
 
     c[nScope]->cd(1);
-    gPad->SetRightMargin(0.24);
+    gPad->SetLeftMargin(0.14);
+    gPad->SetRightMargin(0.33);
     hAbs[nScope][0]->Draw("HIST LP");
 
     for (int i=1; i<nGraphs; ++i) {
@@ -255,45 +256,52 @@ void PlotAlignmentVsTimePaper(void) {
     sprintf(title, "Alignment values, channel %d", readoutChannel[chan]);
     hAbs[nScope][0]->SetTitle(title);
     hAbs[nScope][0]->GetXaxis()->SetTitle("Fill number (brackets = magnet off)");
-    hAbs[nScope][0]->GetYaxis()->SetTitle("Rotation [rad] or translation [cm]");
-    hAbs[nScope][0]->GetYaxis()->SetRangeUser(minAbs-0.01, maxAbs+0.01);
+    hAbs[nScope][0]->GetYaxis()->SetTitle("Rotation [rad]");
+    hAbs[nScope][0]->GetYaxis()->SetRangeUser(minAbs-0.01, 0.41);
     hAbs[nScope][0]->GetYaxis()->SetTitleOffset(1.4);
+    // add second y-axis on right side for the translation
+    c[nScope]->Update();
+    TGaxis *ax2 = new TGaxis(gPad->GetUxmax(),gPad->GetUymin(),
+			     gPad->GetUxmax(), gPad->GetUymax(), minAbs-0.01, 0.41, 510, "L+");
+    ax2->SetTitle("Translation [cm]");
+    ax2->SetTitleOffset(1.4);
+    ax2->Draw();
 
     for (int i=0; i<nFiles; ++i)
       hAbs[nScope][0]->GetXaxis()->SetBinLabel(i+1, fillNames[i]);
 
-    TLegend *l1 = new TLegend(0.78, 0.35, 0.99, 0.9);
+    TLegend *l1 = new TLegend(0.79, 0.35, 0.99, 0.9);
     for (int i=0; i<nGraphs; ++i)
       l1->AddEntry(hAbs[nScope][i], plotLabel[i], "LP");
     // l1->AddEntry(hAbs[nScope][0], "#splitline{All rot. & trans. are}{with respect to ROC 0}", "");
     l1->SetFillColor(0);
     l1->Draw();
 
-    hAbs[nScope][0]->SetMaximum(0.4); //make space for label
+    //hAbs[nScope][0]->SetMaximum(0.4); //make space for label
     TText *t1 = new TText(0, 0, "CMS");
     t1->SetNDC();
-    t1->SetX(0.46);
+    t1->SetX(0.35);
     t1->SetY(0.84);
     t1->SetTextFont(61);
     t1->SetTextSize(0.05);
     t1->Draw();
     TText *t2 = new TText(0, 0, "Preliminary");
     t2->SetNDC();
-    t2->SetX(0.56);
+    t2->SetX(0.45);
     t2->SetY(0.84);
     t2->SetTextFont(52);
     t2->SetTextSize(0.05);
     t2->Draw();
     TText *t3 = new TText(0, 0, "2015");
     t3->SetNDC();
-    t3->SetX(0.65);
+    t3->SetX(0.55);
     t3->SetY(0.78);
     t3->SetTextSize(0.05);
     t3->Draw();
 
-
     c[nScope]->cd(2);
-    gPad->SetRightMargin(0.24);
+    gPad->SetLeftMargin(0.14);
+    gPad->SetRightMargin(0.33);
     hAvg[nScope][0]->Draw("HIST LP");
 
     for (int i=1; i<nGraphs; ++i) {
@@ -308,14 +316,21 @@ void PlotAlignmentVsTimePaper(void) {
     sprintf(title, "Alignment difference from average value, channel %d", readoutChannel[chan]);
     hAvg[nScope][0]->SetTitle(title);
     hAvg[nScope][0]->GetXaxis()->SetTitle("Fill number (brackets = magnet off)");
-    hAvg[nScope][0]->GetYaxis()->SetTitle("Difference in rotation [rad] or translation [cm]");
+    hAvg[nScope][0]->GetYaxis()->SetTitle("Difference in rotation [rad]");
     hAvg[nScope][0]->GetYaxis()->SetRangeUser(minAvg*1.1, maxAvg*1.1);
     hAvg[nScope][0]->GetYaxis()->SetTitleOffset(1.8);
+
+    c[nScope]->Update();
+    TGaxis *ax3 = new TGaxis(gPad->GetUxmax(),gPad->GetUymin(),
+			     gPad->GetUxmax(), gPad->GetUymax(), minAvg*1.1, maxAvg*1.1, 510, "L+");
+    ax3->SetTitle("Difference in translation [cm]");
+    ax3->SetTitleOffset(1.8);
+    ax3->Draw();
 
     for (int i=0; i<nFiles; ++i)
       hAvg[nScope][0]->GetXaxis()->SetBinLabel(i+1, fillNames[i]);
 
-    TLegend *l2 = new TLegend(0.78, 0.35, 0.99, 0.9);
+    TLegend *l2 = new TLegend(0.81, 0.35, 1.01, 0.9);
     for (int i=0; i<nGraphs; ++i)
       l2->AddEntry(hAvg[nScope][i], plotLabel[i], "LP");
     // l2->AddEntry(hAvg[nScope][0], "#splitline{All rot. & trans. are}{with respect to ROC 0}", "");

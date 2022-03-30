@@ -11,6 +11,8 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Fig. 6 (accidental rates vs. SBIL): AccidentalRates/PlotAccidentalRatesPaper.C, originally derived from PLTOffline/AccidentalStudies/PlotAccidentalRatesAllScans.C, which uses the data in AccidentalRates/AccidentalData/. The 2015 data was originally also in PLTOfflineAccidentalStudies, while I had to pull the 2016 data from Joe's directory in /home/jheidema/PLTOffline/AccidentalStudies on pltoffline (this should really be committed at some point). I modified the script so it can run on either 2015 or 2016 depending on the argument; use .x PlotAccidentalRatesPaper.C(0) for 2015 and (1) for 2016.
 
+* *Fig. 7 (accidental rates using likelihood method)*: left plot in AccidentalLikelihood/AccidentalLikelihoodFit_4979.pdf, plot from Nimmitha. Right plot not available yet.
+
 * *Fig. 8 (track efficiency vs. time)*: TrackEfficiency/Efficiency_Ch*. Only plots from Francesco, still need to get the macros.
 
 * *Fig. 10 (comparison of track efficiency and emittance scans)*: TrackEfficiency/EfficiencyComparison_2017_ch12.* and TrackEfficiency/EfficiencyRatios_2017.*. Plots only, no macros.

@@ -25,6 +25,8 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Fig. 16 (2015 alignment over time): Alignment/PlotAlignmentVsTimePaper.C, originally derived from PLTOffline/plotScripts/PlotAlignmentVsTime.C, which uses the alignment data in Alignment2015/, originally from PLTOffline/ALIGNMENT.
 
+* Fig. 17 (alignment vs. mask size): MaskStudies/PlotAccidentalRatesMasks.C. The data in here is a copy from PLTOffline/AccidentalStudies/MaskStudies/; see that directory for further documentation.
+
 * Figs. 18 (HV scan results) and 19 (depletion voltage over time): all code and data files in DepletionVoltage/ from Andres.
 
 * *Fig. 20 (pulse height stability)*: PulseHeights/ph_stability.*. Only plots, still need to get the macros from Francesco.

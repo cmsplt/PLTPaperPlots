@@ -19,7 +19,7 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Fig. 9 (accidental rates vs. SBIL): AccidentalRates/PlotAccidentalRatesPaper.C, originally derived from PLTOffline/AccidentalStudies/PlotAccidentalRatesAllScans.C, which uses the data in AccidentalRates/AccidentalData/. The 2015 data was originally also in PLTOfflineAccidentalStudies, while I had to pull the 2016 data from Joe's directory in /home/jheidema/PLTOffline/AccidentalStudies on pltoffline (this should really be committed at some point). I modified the script so it can run on either 2015 or 2016 depending on the argument; use .x PlotAccidentalRatesPaper.C(0) for 2015 and (1) for 2016.
 
-* *Fig. 10 (accidental rates using likelihood method)*: left plot in AccidentalLikelihood/AccidentalLikelihoodFit_4979.pdf, plot from Nimmitha. Right plot not available yet.
+* Fig. 10 (accidental rates using likelihood method): left plot in AccidentalLikelihood/AccidentalLikelihoodFit_4979.pdf. Created using the script fit_model_ggg_g.C from Nimmitha from the data file Fill_4979_v2.root (note that I've renamed the output of the script). *Right plot to be added.*
 
 * Fig. 11 (alignment vs. mask size): MaskStudies/PlotAccidentalRatesMasks.C. The data in here is a copy from PLTOffline/AccidentalStudies/MaskStudies/; see that directory for further documentation.
 

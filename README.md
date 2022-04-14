@@ -47,7 +47,7 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * *Fig. 23 (VdM scan curves)*: VdM/*, plots created by Lizardo using the VdM framework.
 
-* Fig. 24 (emittance scan results): Efficiency plot for 2017 in EmittanceScans/EfficiencyCorrections2017.{pdf,png}, using PlotEmittanceScanFOM2017.C and the spreadsheet from David. *Linearity plot in progress.*
+* Fig. 24 (emittance scan results): Efficiency plot for 2017 in EmittanceScans/EfficiencyCorrections2017.{pdf,png}, using PlotEmittanceScanFOM2017.C and the spreadsheet from David. Linearity plot for fill 6325 in EmittanceScans/SlopeFit_6325_orig.{pdf,png}, using PlotSlopeFit.C and the spreadsheets from David.
 
 * *Fig. 25 (comparison of track efficiency and emittance scans)*: TrackEfficiency/EfficiencyComparison_2017_ch12.* and TrackEfficiency/EfficiencyRatios_2017.*. Plots only, no macros.
 

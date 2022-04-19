@@ -63,21 +63,21 @@ void PlotAlignment4444Paper(void) {
 
   TText *t1 = new TText(0, 0, "CMS");
   t1->SetNDC();
-  t1->SetX(0.23);
+  t1->SetX(0.24);
   t1->SetY(0.84);
   t1->SetTextFont(61);
   t1->SetTextSize(0.05);
   t1->Draw();
   TText *t2 = new TText(0, 0, "Preliminary");
   t2->SetNDC();
-  t2->SetX(0.345);
+  t2->SetX(0.355);
   t2->SetY(0.84);
   t2->SetTextFont(52);
   t2->SetTextSize(0.05);
-  t2->Draw();
+  //t2->Draw();
   TText *t3 = new TText(0, 0, "2015");
   t3->SetNDC();
-  t3->SetX(0.23);
+  t3->SetX(0.24);
   t3->SetY(0.78);
   t3->SetTextSize(0.05);
   t3->Draw();
@@ -100,7 +100,7 @@ void PlotAlignment4444Paper(void) {
   h2->Draw();
 
   t1->Draw();
-  t2->Draw();
+  //t2->Draw();
   t3->Draw();
 
   c1->cd(3);
@@ -118,7 +118,7 @@ void PlotAlignment4444Paper(void) {
   h3->Draw();
 
   t1->Draw();
-  t2->Draw();
+  //t2->Draw();
   t3->Draw();
 
   c1->Print("Alignment_XdY_4444_Ch7_ROC1.pdf");

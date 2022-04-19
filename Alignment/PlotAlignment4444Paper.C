@@ -48,9 +48,11 @@ void PlotAlignment4444Paper(void) {
   h1->SetTitle("Before alignment");
   h1->GetXaxis()->SetTitle("Track position in x [cm]");
   h1->GetYaxis()->SetTitle("Residual distance in y [cm]");
+  h1->SetLabelSize(0.05, "xy");
+  h1->SetTitleSize(0.05, "xy");
   h1->SetMaximum(-0.025);
   h1->SetMinimum(-0.045);
-  h1->GetYaxis()->SetTitleOffset(2.4);
+  h1->GetYaxis()->SetTitleOffset(2.2);
   h1->GetXaxis()->SetRangeUser(-0.4, 0.4);
   h1->SetStats(0);
   // get the fit line so we can modify it
@@ -85,9 +87,11 @@ void PlotAlignment4444Paper(void) {
   h2->SetTitle("After rotation");
   h2->GetXaxis()->SetTitle("Track position in x [cm]");
   h2->GetYaxis()->SetTitle("Residual distance in y [cm]");
+  h2->SetLabelSize(0.05, "xy");
+  h2->SetTitleSize(0.05, "xy");
   h2->SetMaximum(-0.025);
   h2->SetMinimum(-0.045);
-  h2->GetYaxis()->SetTitleOffset(2.4);
+  h2->GetYaxis()->SetTitleOffset(2.2);
   h2->GetXaxis()->SetRangeUser(-0.4, 0.4);
   h2->SetStats(0);
   TF1 *f2 = h2->GetFunction("pol1");
@@ -104,9 +108,11 @@ void PlotAlignment4444Paper(void) {
   h3->SetTitle("After translation");
   h3->GetXaxis()->SetTitle("Track position in x [cm]");
   h3->GetYaxis()->SetTitle("Residual distance in y [cm]");
+  h3->SetLabelSize(0.05, "xy");
+  h3->SetTitleSize(0.05, "xy");
   h3->SetMaximum(0.01);
   h3->SetMinimum(-0.01);
-  h3->GetYaxis()->SetTitleOffset(2.4);
+  h3->GetYaxis()->SetTitleOffset(2.2);
   h3->GetXaxis()->SetRangeUser(-0.4, 0.4);
   h3->SetStats(0);
   h3->Draw();

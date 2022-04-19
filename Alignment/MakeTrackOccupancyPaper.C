@@ -7,8 +7,8 @@
 void DrawHeader(void) {
   TText *t1 = new TText(0.17, 0.92, "CMS");
   t1->SetNDC(true);
-  t1->SetX(0.17);
-  t1->SetY(0.92);
+  t1->SetX(0.21);
+  t1->SetY(0.84);
   t1->SetTextAlign(11);
   t1->SetTextSize(0.075*0.9);
   t1->SetTextFont(61);
@@ -21,7 +21,7 @@ void DrawHeader(void) {
   t2->SetTextAlign(11);
   t2->SetTextSize(0.057*0.9);
   t2->SetTextFont(52);
-  t2->Draw();
+  //t2->Draw();
 
   TText *t3 = new TText(0.89, 0.92, "2016, fill 4892");
   t3->SetNDC(true);

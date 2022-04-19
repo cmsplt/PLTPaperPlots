@@ -162,7 +162,7 @@ void PlotSlopeFit(void) {
   t2->SetY(0.85);
   t2->SetTextFont(52);
   t2->SetTextSize(0.05);
-  t2->Draw();
+  // t2->Draw();
   TText *t3 = new TText(0, 0, "2017");
   t3->SetNDC();
   t3->SetX(0.15);

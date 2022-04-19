@@ -11,7 +11,7 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * *Fig. 5 (readout schematic)*: PLTReadoutSchematic.png; taken from original plot from Andreas, but no macro available.
 
-* *Fig. 6 (active area aligment)*: *to be added*
+* Fig. 6 (active area aligment): Alignment/MakeTrackOccupancyPaper.C, which uses the histograms produced by TrackOccupancy stored in the ROOT file histo_track_occupancy_4892.root. These are based on scripts I used to create the plots for the 2015 approval which were on april, but not committed to PLTOffline (this should be fixed soon).
 
 * Fig. 7 (sample alignment procedure): Alignment/PlotAlignment4444Paper.C, which takes the histograms produced by CalculateAlignment stored in the ROOT file alignment_4444_30M.root and formats them nicely. See the script for details on how the ROOT file is generated.
 

@@ -175,7 +175,7 @@ void PlotPLTBackground(void) {
     g_b2->Draw("AL");
     //g_b2->SetTitle("Measured background rates");
     g_b2->SetTitle("");
-    g_b2->GetXaxis()->SetTitle("CERN time");
+    g_b2->GetXaxis()->SetTitle("Local CERN time");
     g_b2->GetYaxis()->SetTitle("Background rate [Hz/cm^{2}/(10^{11} protons)]");
     g_b2->GetYaxis()->SetTitleOffset(1.3);
     g_b2->SetLineColor(mycolors[1]);

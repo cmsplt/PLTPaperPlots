@@ -122,7 +122,7 @@ void PlotAccidentalRatesPaper(int which) {
 
   // Plot it all.
 
-  TCanvas *c1 = new TCanvas("c1", "c1", 900, 600);
+  TCanvas *c1 = new TCanvas("c1", "c1", 900, 750);
   TGraph* g[nFiles[which]];
   TF1* f[nFiles[which]];
 
@@ -197,7 +197,7 @@ void PlotAccidentalRatesPaper(int which) {
   t1->Draw();
   TText *t2 = new TText(0, 0, "Preliminary");
   t2->SetNDC();
-  t2->SetX(0.225);
+  t2->SetX(0.24);
   t2->SetY(0.88);
   t2->SetTextFont(52);
   t2->SetTextSize(0.05);

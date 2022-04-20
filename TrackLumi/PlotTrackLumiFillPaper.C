@@ -299,7 +299,7 @@ void PlotTrackLumiFillPaper(void) {
 
   TText *t1 = new TText(0, 0, "CMS");
   t1->SetNDC();
-  t1->SetX(0.58);
+  t1->SetX(0.81); // 0.58 for Preliminary
   t1->SetY(0.84);
   t1->SetTextFont(61);
   t1->SetTextSize(0.05);
@@ -310,7 +310,7 @@ void PlotTrackLumiFillPaper(void) {
   t2->SetY(0.84);
   t2->SetTextFont(52);
   t2->SetTextSize(0.05);
-  t2->Draw();
+  //t2->Draw();
   TText *t3 = new TText(0, 0, "2016");
   t3->SetNDC();
   t3->SetX(0.81);
@@ -386,7 +386,7 @@ void PlotTrackLumiFillPaper(void) {
   l3->Draw();
 
   t1->Draw();
-  t2->Draw();
+  //t2->Draw();
   t3->Draw();
 
   std::string outFile = "TrackLumiVsTime_"+fillNumber+".png";

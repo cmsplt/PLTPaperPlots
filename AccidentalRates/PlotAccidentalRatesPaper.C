@@ -108,8 +108,9 @@ void PlotAccidentalRatesPaper(int which) {
   gROOT->SetStyle("Plain");                  
   gStyle->SetPalette(1);
   gStyle->SetPadLeftMargin(0.1);
-  gStyle->SetPadRightMargin(0.1);
-  gStyle->SetPadTopMargin(0.08);
+  gStyle->SetPadRightMargin(0.05);
+  gStyle->SetPadTopMargin(0.05);
+  gStyle->SetPadBottomMargin(0.12);
   gStyle->SetTitleBorderSize(0);
   gStyle->SetTitleX(0.18);
   //gStyle->SetTitleY(1.0);
@@ -122,7 +123,6 @@ void PlotAccidentalRatesPaper(int which) {
   // Plot it all.
 
   TCanvas *c1 = new TCanvas("c1", "c1", 900, 600);
-  gPad->SetRightMargin(0.35);
   TGraph* g[nFiles[which]];
   TF1* f[nFiles[which]];
 
@@ -137,7 +137,11 @@ void PlotAccidentalRatesPaper(int which) {
   gall->SetTitle("");
   gall->GetXaxis()->SetTitle("Uncorrected fast-or SBIL (Hz/#mub)");
   gall->GetYaxis()->SetTitle("Measured accidental rate (%)");
-  //gall->GetYaxis()->SetTitleOffset(1.4);
+  gall->GetXaxis()->SetLabelSize(0.05);
+  gall->GetXaxis()->SetTitleSize(0.05);
+  gall->GetYaxis()->SetLabelSize(0.05);
+  gall->GetYaxis()->SetTitleSize(0.05);
+  gall->GetYaxis()->SetTitleOffset(0.8);
   if (which == 0)
     gall->GetYaxis()->SetRangeUser(4.5, 12.0);
   else
@@ -174,7 +178,7 @@ void PlotAccidentalRatesPaper(int which) {
   }
   g[0]->Draw("P same");
 
-  TLegend *l = new TLegend(0.66, 0.36, 0.99, 0.69);
+  TLegend *l = new TLegend(0.60, 0.13, 0.94, 0.50);
   for (int i=0; i<nFiles[which]; ++i) {
     l->AddEntry(g[i], fillLabels[which][i], "LP");
   }
@@ -186,15 +190,15 @@ void PlotAccidentalRatesPaper(int which) {
 
   TText *t1 = new TText(0, 0, "CMS");
   t1->SetNDC();
-  t1->SetX(0.13);
-  t1->SetY(0.85);
+  t1->SetX(0.15);
+  t1->SetY(0.88);
   t1->SetTextFont(61);
   t1->SetTextSize(0.05);
   t1->Draw();
   TText *t2 = new TText(0, 0, "Preliminary");
   t2->SetNDC();
-  t2->SetX(0.205);
-  t2->SetY(0.85);
+  t2->SetX(0.225);
+  t2->SetY(0.88);
   t2->SetTextFont(52);
   t2->SetTextSize(0.05);
   t2->Draw();
@@ -202,8 +206,8 @@ void PlotAccidentalRatesPaper(int which) {
   if (which == 0) t3 = new TText(0, 0, "2015");
   else t3 = new TText(0, 0, "2016");
   t3->SetNDC();
-  t3->SetX(0.13);
-  t3->SetY(0.79);
+  t3->SetX(0.15);
+  t3->SetY(0.82);
   t3->SetTextSize(0.05);
   t3->Draw();
 

@@ -200,6 +200,13 @@ void PlotAlignmentVsTimePaper(void) {
 				    "#Deltax ROC 2",
 				    "#Deltay ROC 1",
 				    "#Deltay ROC 2"};
+  const char *plotLabelDiff[nGraphs] = {"#delta#theta ROC 1",
+					"#delta#theta ROC 2",
+					"#deltax ROC 1",
+					"#deltax ROC 2",
+					"#deltay ROC 1",
+					"#deltay ROC 2"};
+  const int plotColor[nGraphs] = {kBlack, kRed, kBlue, kViolet, kOrange-3, kGreen+2};
   TH1F *hAbs[nScopes][nGraphs];
   TH1F *hAvg[nScopes][nGraphs];
   TCanvas *c[nScopes];
@@ -248,13 +255,16 @@ void PlotAlignmentVsTimePaper(void) {
       hAbs[nScope][i]->Draw("HIST LP same");
     }
     for (int i=0; i<nGraphs; ++i) {
-      hAbs[nScope][i]->SetLineColor(i+1);
-      hAbs[nScope][i]->SetMarkerColor(i+1);
+      hAbs[nScope][i]->SetLineColor(plotColor[i]);
+      hAbs[nScope][i]->SetMarkerColor(plotColor[i]);
       hAbs[nScope][i]->SetMarkerStyle(kFullSquare);
     }
 
     sprintf(title, "Alignment values, channel %d", readoutChannel[chan]);
-    hAbs[nScope][0]->SetTitle(title);
+    //hAbs[nScope][0]->SetTitle(title);
+    hAbs[nScope][0]->SetTitle("");
+    hAbs[nScope][0]->GetXaxis()->SetLabelSize(0.045);
+    hAbs[nScope][0]->GetXaxis()->SetTitleOffset(1.2);
     hAbs[nScope][0]->GetXaxis()->SetTitle("Fill number (brackets = magnet off)");
     hAbs[nScope][0]->GetYaxis()->SetTitle("Rotation [rad]");
     hAbs[nScope][0]->GetYaxis()->SetRangeUser(minAbs-0.01, 0.41);
@@ -308,13 +318,16 @@ void PlotAlignmentVsTimePaper(void) {
       hAvg[nScope][i]->Draw("HIST LP same");
     }
     for (int i=0; i<nGraphs; ++i) {
-      hAvg[nScope][i]->SetLineColor(i+1);
-      hAvg[nScope][i]->SetMarkerColor(i+1);
+      hAvg[nScope][i]->SetLineColor(plotColor[i]);
+      hAvg[nScope][i]->SetMarkerColor(plotColor[i]);
       hAvg[nScope][i]->SetMarkerStyle(kFullSquare);
     }
 
     sprintf(title, "Alignment difference from average value, channel %d", readoutChannel[chan]);
-    hAvg[nScope][0]->SetTitle(title);
+    //hAvg[nScope][0]->SetTitle(title);
+    hAvg[nScope][0]->SetTitle("");
+    hAvg[nScope][0]->GetXaxis()->SetLabelSize(0.045);
+    hAvg[nScope][0]->GetXaxis()->SetTitleOffset(1.2);
     hAvg[nScope][0]->GetXaxis()->SetTitle("Fill number (brackets = magnet off)");
     hAvg[nScope][0]->GetYaxis()->SetTitle("Difference in rotation [rad]");
     hAvg[nScope][0]->GetYaxis()->SetRangeUser(minAvg*1.1, maxAvg*1.1);
@@ -332,7 +345,7 @@ void PlotAlignmentVsTimePaper(void) {
 
     TLegend *l2 = new TLegend(0.81, 0.35, 1.01, 0.9);
     for (int i=0; i<nGraphs; ++i)
-      l2->AddEntry(hAvg[nScope][i], plotLabel[i], "LP");
+      l2->AddEntry(hAvg[nScope][i], plotLabelDiff[i], "LP");
     // l2->AddEntry(hAvg[nScope][0], "#splitline{All rot. & trans. are}{with respect to ROC 0}", "");
     l2->SetFillColor(0);
     l2->Draw();

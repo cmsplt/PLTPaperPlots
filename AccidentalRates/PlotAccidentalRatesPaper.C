@@ -201,7 +201,7 @@ void PlotAccidentalRatesPaper(int which) {
   t2->SetY(0.88);
   t2->SetTextFont(52);
   t2->SetTextSize(0.05);
-  t2->Draw();
+  //t2->Draw();
   TText *t3;
   if (which == 0) t3 = new TText(0, 0, "2015");
   else t3 = new TText(0, 0, "2016");

@@ -250,7 +250,7 @@ std::tuple<float, float, float, float> PlotTrackLumiVdMPaper(const char *scanFil
   t3->SetY(0.84);
   t3->SetTextFont(52);
   t3->SetTextSize(0.05);
-  t3->Draw();
+  //t3->Draw();
   TText *t4 = new TText(0, 0, "2017");
   t4->SetNDC();
   t4->SetX(0.15);
@@ -527,7 +527,7 @@ void PlotTrackLumiVdMPaper(int whichPlot) {
     t3->SetY(0.84);
     t3->SetTextFont(52);
     t3->SetTextSize(0.05);
-    t3->Draw();
+    //t3->Draw();
     TText *t4 = new TText(0, 0, "2017");
     t4->SetNDC();
     t4->SetX(0.15);
@@ -565,7 +565,7 @@ void PlotTrackLumiVdMPaper(int whichPlot) {
     tsv->Draw();
 
     t2->Draw();
-    t3->Draw();
+    //t3->Draw();
     t4->Draw();
 
     csv->Print((sigmaVisFileName+".png").c_str());

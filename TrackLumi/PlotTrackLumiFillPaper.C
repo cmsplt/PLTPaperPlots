@@ -269,7 +269,7 @@ void PlotTrackLumiFillPaper(void) {
   g_lhf->Draw("AP");
   std::string titleString = "Luminosity comparison vs. time, fill "+fillNumber;
   g_lhf->SetTitle(titleString.c_str());
-  g_lhf->GetXaxis()->SetTitle("CERN time");
+  g_lhf->GetXaxis()->SetTitle("Local CERN time");
   g_lhf->GetYaxis()->SetTitle("Luminosity (Hz/nb)");
   g_lhf->GetYaxis()->SetTitleOffset(1.2);
   g_lhf->SetMarkerStyle(kFullCircle);
@@ -322,8 +322,8 @@ void PlotTrackLumiFillPaper(void) {
   g_rtp->Draw("AP");
   titleString = "Luminosity ratios vs. time, fill "+fillNumber;
   g_rtp->SetTitle(titleString.c_str());
-  g_rtp->GetXaxis()->SetTitle("CERN time");
-  g_rtp->GetYaxis()->SetTitle("Ratio");
+  g_rtp->GetXaxis()->SetTitle("Local CERN time");
+  g_rtp->GetYaxis()->SetTitle("Luminosity ratio");
   g_rtp->GetYaxis()->SetTitleOffset(1.5);
   g_rtp->SetMarkerStyle(kFullCircle);
   g_rtp->SetMarkerColor(kBlue);
@@ -351,7 +351,7 @@ void PlotTrackLumiFillPaper(void) {
   titleString = "Luminosity ratios vs. SBIL, fill "+fillNumber;
   g_rlp->SetTitle(titleString.c_str());
   g_rlp->GetXaxis()->SetTitle("SBIL (Hz/#mub)");
-  g_rlp->GetYaxis()->SetTitle("Ratio");
+  g_rlp->GetYaxis()->SetTitle("Luminosity ratio");
   g_rlp->GetYaxis()->SetTitleOffset(1.5);
   g_rlp->SetMarkerStyle(kFullCircle);
   g_rlp->SetMarkerColor(kBlue);

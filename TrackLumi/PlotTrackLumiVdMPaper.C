@@ -73,7 +73,7 @@ std::tuple<float, float, float, float> PlotTrackLumiVdMPaper(const char *scanFil
   gStyle->SetTitleBorderSize(0);
   gStyle->SetTitleX(0.1);
   gStyle->SetTitleY(1.0);
-  gStyle->SetTitleH(0.09);
+  gStyle->SetTitleH(0.085);
   gStyle->SetTitleW(0.7);
   gStyle->SetCanvasBorderMode(0);
   gStyle->SetLegendBorderSize(0);
@@ -191,7 +191,7 @@ std::tuple<float, float, float, float> PlotTrackLumiVdMPaper(const char *scanFil
 
   // Plot and fit the results.
 
-  TGraph *g1 = new TGraphErrors(sepVal.size(), sepVal.data(), trackLumiVal.data(), sepErr.data(), trackLumiErr.data());
+  TGraphErrors *g1 = new TGraphErrors(sepVal.size(), sepVal.data(), trackLumiVal.data(), sepErr.data(), trackLumiErr.data());
 
   TCanvas *c1 = new TCanvas("c1", "c1", 600, 700);
 
@@ -260,6 +260,7 @@ std::tuple<float, float, float, float> PlotTrackLumiVdMPaper(const char *scanFil
 
   // Make residual plot.
   std::vector<double> residualVal;
+  std::vector<double> residualErr;
   for (int i=0; i<sepVal.size(); ++i) {
     float x = sepVal[i];
     // Ideally we should account for the uncertainty in the fit function also but this should be good enough for our purposes.
@@ -267,9 +268,10 @@ std::tuple<float, float, float, float> PlotTrackLumiVdMPaper(const char *scanFil
     if (trackLumiErr[i] != 0)
       resid = (trackLumiVal[i] - f1->Eval(x))/trackLumiErr[i];
     residualVal.push_back(resid);
+    residualErr.push_back(1.0);
   }
   p2->cd();
-  TGraph *g2 = new TGraph(sepVal.size(), sepVal.data(), residualVal.data());
+  TGraphErrors *g2 = new TGraphErrors(sepVal.size(), sepVal.data(), residualVal.data(), sepErr.data(), residualErr.data());
   g2->Draw("AP");
   g2->SetTitle("");
   g2->GetYaxis()->SetTitle("Residual (#sigma)");

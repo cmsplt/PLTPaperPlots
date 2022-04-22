@@ -129,9 +129,9 @@ void PlotRAMSESCorrectionsPaper(void) {
 
   TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
   gslope->Draw("AP");
-  gslope->SetTitle("2016 PLT slope corrections");
+  gslope->SetTitle("2016 PLT linearity corrections");
   gslope->GetXaxis()->SetTitle("Integrated luminosity (fb^{-1})");
-  gslope->GetYaxis()->SetTitle("PLT/RAMSES slope [%/(Hz/#mub)]");
+  gslope->GetYaxis()->SetTitle("PLT/RAMSES relative nonlinearity [%/(Hz/#mub)]");
   gslope->SetMarkerStyle(kFullCircle);
   gslope->SetMarkerColor(kBlue);
   gslope->SetMarkerSize(1);

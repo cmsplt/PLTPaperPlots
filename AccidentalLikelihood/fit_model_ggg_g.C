@@ -84,6 +84,7 @@
 
   frame1->GetXaxis()->SetTitleSize(0.0425);
   frame1->GetYaxis()->SetTitleSize(0.0425);
+  frame1->GetXaxis()->SetTitle("Track y slope");
 
   frame1->GetXaxis()->SetTitleOffset(1.0);
   frame1->GetYaxis()->SetTitleOffset(1.1);
@@ -97,7 +98,7 @@
 
   frame1->Draw();
 
-  TLegend *leg1 = new TLegend(0.60,0.73,0.86,0.87);
+  TLegend *leg1 = new TLegend(0.55,0.73,0.81,0.87);
 
 
 //https://root-forum.cern.ch/t/legend-with-rooplot/10966
@@ -105,7 +106,7 @@
   leg1->SetFillColor(kWhite);
   leg1->SetLineColor(kWhite);
   //leg1->AddEntry("dataSet","Data", "P");
-  leg1->AddEntry("signal","Fit to vdM data", "L");
+  leg1->AddEntry("signal","Template from VdM fit", "L");
   leg1->AddEntry("background","Accidentals", "L");
   leg1->AddEntry("model","Total fit","L");
   leg1->SetTextSize(0.035);

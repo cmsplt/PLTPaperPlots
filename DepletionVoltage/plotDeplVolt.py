@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
 
-import os, sys, typing, mplhep, pandas, json, matplotlib.pyplot
+import json
+import os 
+import sys
+import typing
+
+import matplotlib.pyplot
+import mplhep
+import pandas
 
 def loadDeplVolt() -> pandas.DataFrame:
-    # load json file with depletion voltage values
+    '''load json file with depletion voltage values'''
     with open('depletionVoltage.json', 'r') as deplVoltFile:
         deplVolt = pandas.DataFrame.from_dict(json.load(deplVoltFile)).T
     deplVolt.index = [fname.split('/')[1].lstrip('Scan_').rstrip('.txt') for fname in deplVolt.index.to_list()]
@@ -11,21 +18,21 @@ def loadDeplVolt() -> pandas.DataFrame:
     return deplVolt
 
 def intLumiByDate() -> pandas.DataFrame:
-    # return dataframe Run2 cumulative integrated lumi (in 1/fb) with the date as index
-    file='lumiByDay.csv' if os.path.exists('lumiByDay.csv') else 'https://cern.ch/cmslumi/publicplots/lumiByDay.csv'
-    lumiByDay = pandas.read_csv(file)
+    '''return dataframe Run2 cumulative integrated lumi (in 1/fb) with the date as index'''
+    lumiByDay = 'lumiByDay.csv' if os.path.exists('lumiByDay.csv') else 'https://cern.ch/cmslumi/publicplots/lumiByDay.csv'
+    lumiByDay = pandas.read_csv(lumiByDay)
     lumiByDay = lumiByDay[lumiByDay.Date >= '2015'] # LHC Run2
     lumiByDay.Date = pandas.to_datetime(lumiByDay.Date, format='%Y-%m-%d')
     lumiByDay['IntLumi(/fb)'] = lumiByDay['Delivered(/ub)'].cumsum().divide(10**9)
     return lumiByDay[['Date','IntLumi(/fb)']].set_index('Date')
 
 def plotAxVline(intLumi:str, intLumiAx:matplotlib.axes.Axes, label:str, fontsize:int=14, position:str='bottom'):
-    # add vertical line at the specified intLumi (given by intLumiByDate())
-    matplotlib.pyplot.axvline(x=intLumi, color='grey', linestyle='--', alpha=0.4, label=label)
+    '''add vertical line at the specified intLumi (given by intLumiByDate())'''
+    matplotlib.pyplot.axvline(x=intLumi, color='grey', linestyle='--', alpha=0.75, label=label)
     matplotlib.pyplot.text(x=(intLumi+1)/intLumiAx.get_xlim()[1], y=0.05, s=label, color='grey', rotation=90, fontsize=fontsize, verticalalignment=position, transform=intLumiAx.transAxes)
 
 def dateSecondaryAxis(intLumiAx:matplotlib.axes.Axes, lumiAtScanDate:typing.List[float], dataCh:pandas.Series):
-    # Add secondary date axis [https://stackoverflow.com/a/33447004/13019084]
+    '''Add secondary date axis [https://stackoverflow.com/a/33447004/13019084]'''
     dateAx = intLumiAx.twiny()
     dateAx.set_xlim(intLumiAx.get_xlim()) # set same range as intLumi axis
     dateAx.set_xticks(lumiAtScanDate) # copy location of intLumi x-ticks
@@ -34,7 +41,7 @@ def dateSecondaryAxis(intLumiAx:matplotlib.axes.Axes, lumiAtScanDate:typing.List
     _ = [label.set_visible(False) for label in dateAx.get_xaxis().get_ticklabels()[1::2]] # print every second xticklabel starting with the first [https://stackoverflow.com/a/50034357/13019084]
 
 def plotDeplVolt(ch:int):
-    # plot depletion voltage vs time for channel 'ch'
+    '''plot depletion voltage vs time for channel `ch`'''
     deplVolt = loadDeplVolt()
     dataCh = deplVolt[ch][deplVolt[ch] != 0] # depletion voltage dataframe (drop entries where depletion voltage == 0 )
     intLumi = intLumiByDate()
@@ -43,9 +50,14 @@ def plotDeplVolt(ch:int):
     (fig, intLumiAx) = matplotlib.pyplot.subplots(figsize=(10, 6))
     # (fontsize, markersize) = 12, 40
     intLumiAx.scatter(x=lumiAtScanDate, y=dataCh.to_list()) # s=markersize
-    intLumiAx.set_title(label=f'Ch{ch} Depletion Voltage vs Integrated Luminosity') # fontsize=20
-    matplotlib.pyplot.xlabel(xlabel='Integrated Luminosity (1/fb)') # fontsize=fontsize
-    matplotlib.pyplot.ylabel(ylabel='Depletion Voltage (V)') # fontsize=fontsize
+    # intLumiAx.set_title(label=f'Ch{ch} Depletion Voltage vs Integrated Luminosity') # fontsize=20
+    # intLumiAx.set_title(label=f'Ch{ch} HV Setpoint for Maximium Hit Efficiency\nvs Integrated Luminosity') # fontsize=20
+    intLumiAx.set_title(label=f'Channel {ch}') # fontsize=20
+    matplotlib.pyplot.xlabel(xlabel=r'Integrated Luminosity ($\mathrm{fb^{-1}}$)') # fontsize=fontsize
+    # matplotlib.pyplot.ylabel(ylabel='Depletion Voltage (V)') # fontsize=fontsize
+    # matplotlib.pyplot.ylabel(ylabel=' HV Setpoint (V)') # fontsize=fontsize
+    # matplotlib.pyplot.ylabel(ylabel=' HV Setpoint (V) for\nMax Hit Efficiency') # fontsize=fontsize
+    matplotlib.pyplot.ylabel(ylabel=r'$\mathrm{V_{maxEff}}$') # fontsize=fontsize
     # matplotlib.pyplot.xticks(fontsize=fontsize)
     # matplotlib.pyplot.yticks(fontsize=fontsize)
     # matplotlib.pyplot.text(x=0.01, y=0.99, transform=intLumiAx.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=fontsize)

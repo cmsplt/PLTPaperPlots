@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
 
-import os, sys, typing, mplhep, pandas, pathlib, matplotlib.pyplot
+import os
+import pathlib
+import sys
+import typing
+
+import mplhep
+import matplotlib.pyplot
+import pandas
 
 def parseLogFile(logFile:str) -> pandas.DataFrame:
-    # Define column headers and load log file into a pandas dataframe (only keep lines matching "#M")
+    '''Define column headers and load log file into a pandas dataframe (only keep lines matching "#M")'''
     def perChList(prefix:str) -> typing.List[str]:
         # channel order hard-coded to match auto-HV scan log files
         # $ grep 'HpFT0,HpFT1,HpFT2,HpFT3,HpNT0,HpNT1,HpNT2,HpNT3,HmFT0,HmFT1,HmFT2,HmFT3,HmNT0,HmNT1,HmNT2,HmNT3' AutoScanLogs/*.txt
@@ -21,7 +28,7 @@ def parseLogFile(logFile:str) -> pandas.DataFrame:
     return logData
 
 def brilcalc(beginTS:str, endTS:str, det:str) -> pandas.DataFrame:
-    # load brilcalc data between {beginTS} and {endTS} for {det} detector [https://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html#brilcalc]
+    '''load brilcalc data between {beginTS} and {endTS} for {det} detector [https://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html#brilcalc]'''
     # [https://janakiev.com/blog/python-shell-commands/]
     command = f'brilcalc lumi --begin "{beginTS}" --end "{endTS}" --byls --tssec --type {det} --output-style csv'
     brilcalcData = os.popen(f'brilcalc lumi --begin "{beginTS}" --end "{endTS}" --byls --tssec --type {det} --output-style csv').read().splitlines()
@@ -33,7 +40,7 @@ def brilcalc(beginTS:str, endTS:str, det:str) -> pandas.DataFrame:
     return brilcalcDF
 
 def mergeDF(logData:pandas.DataFrame) -> pandas.DataFrame:
-    # merge logData and brilcalcDF based on closest timestamps and add new PLT/HF rate column to logData
+    '''merge logData and brilcalcDF based on closest timestamps and add new PLT/HF rate column to logData'''
     beginTS = logData.timestamp.iloc[0].strftime('%m/%d/%y %H:%M:%S')
     endTS = logData.timestamp.iloc[-1].strftime('%m/%d/%y %H:%M:%S')
     brilcalcDF = brilcalc(beginTS, endTS, 'hfet')
@@ -45,7 +52,7 @@ def mergeDF(logData:pandas.DataFrame) -> pandas.DataFrame:
     return logData.dropna()
 
 def processChannel(logData:pandas.DataFrame, ch:int) -> pandas.DataFrame:
-    # determine scanpoints for ch, filter logData for each ch & scanpoint based on uniformity of vMon and rateN values, and return median/std for rateCh & rateNCh
+    '''determine scanpoints for ch, filter logData for each ch & scanpoint based on uniformity of vMon and rateN values, and return median/std for rateCh & rateNCh'''
     vMonGroup = logData[f'vMon{ch}'].groupby(logData[f'vMon{ch}'].round(decimals=0)).count() > 4 # group all integer-rounded vMon values and return 'true' if vMon group members > 4
     scanSteps = vMonGroup[vMonGroup].index.astype('int').to_list() # return HV setpoint values as a list of integers
     def processStep(df:pandas.DataFrame, ch:int, step:int) -> typing.List[typing.Union[int,float]]:
@@ -62,7 +69,7 @@ def processChannel(logData:pandas.DataFrame, ch:int) -> pandas.DataFrame:
     return pandas.DataFrame((processStep(logData, ch, step) for step in scanSteps), columns=cols)
 
 def calculateDeplVolt(logData:pandas.DataFrame, ch:int, thr1:float=0.01, thr2:float=0.02) -> int:
-    # calculate depletion voltage based on percent change. select first value (highest to lowest HV setpoints) within 'thr1' of the previous value and within 'thr2' of next-to-previous value
+    '''calculate depletion voltage based on percent change. select first value (highest to lowest HV setpoints) within 'thr1' of the previous value and within 'thr2' of next-to-previous value'''
     chData  = processChannel(logData, ch)[::-1] # reverse order of scan points (from highest to lowest)
     pctP1 = chData[f'medianRateN{ch}'].pct_change(periods=1).abs()
     pctP2 = chData[f'medianRateN{ch}'].pct_change(periods=2).abs()
@@ -72,19 +79,19 @@ def calculateDeplVolt(logData:pandas.DataFrame, ch:int, thr1:float=0.01, thr2:fl
     return deplVolt
 
 def plotChannel(chData:pandas.DataFrame, ch:int, deplVolt:float, date:str):
-    # plot rate (raw and normalized) vs HV
+    '''plot rate (raw and normalized) vs HV'''
     scale = chData[f'medianRateN{ch}'].max() / chData[f'medianRate{ch}'].max()
     mplhep.style.use('CMS')
     (fig, ax) = matplotlib.pyplot.subplots(figsize=(10, 6))
     # (fontsize, markersize) = 12, 8
-    ax.set_title(label=f'Ch{ch} rate vs HV ({date})') # fontsize=20
+    ax.set_title(label=f'Channel {ch} rate vs HV ({date})') # fontsize=20
     ax.set_xlabel(xlabel='HV setpoint (V)') # fontsize=fontsize
-    ax.set_ylabel(ylabel='Counts per lumisection') # fontsize=fontsize
+    ax.set_ylabel(ylabel='Rate per LS') # fontsize=fontsize
     # matplotlib.pyplot.xticks(fontsize=fontsize)
     # matplotlib.pyplot.yticks(fontsize=fontsize)
     # matplotlib.pyplot.text(x=0.01, y=0.99, transform=ax.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=fontsize)
     mplhep.cms.text('Preliminary', loc=1);
-    ax.errorbar(x=chData['hv'], y=chData[f'medianRateN{ch}'], yerr=chData[f'stdevRateN{ch}'], ls='', marker='o', label='PLT/HF') # markersize=markersize
+    ax.errorbar(x=chData['hv'], y=chData[f'medianRateN{ch}'], yerr=chData[f'stdevRateN{ch}'], ls='', marker='o', label='PLT normalized') # markersize=markersize
     ax.errorbar(x=chData['hv'], y=chData[f'medianRate{ch}']*scale, yerr=chData[f'stdevRate{ch}']*scale, ls='', marker='o', label='PLT') # # markersize=markersize
     ax.legend(loc='lower right', borderpad=0.1, labelspacing=0.1, fancybox=True, framealpha=0.4) # fontsize=fontsize
     ax.axvline(deplVolt, color='red')

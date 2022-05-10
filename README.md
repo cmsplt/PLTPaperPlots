@@ -53,7 +53,7 @@ Ideally, this directory should contain the scripts and all necessary data needed
 
 * Fig. 26 (PLT/RAMSES corrections for 2016): PLTRamsesComparison/PlotRAMSESCorrectionsPaper.C, created for the paper. This uses the data from David's two spreadsheets; the first (pltramseslin.xlsx) includes most of the information but doesn't include the final rescaling to make the efficiency equal to 1 in the VdM fill, so the final efficiency data comes from ForPaper.xlsx. I have extracted the two relevant csv files, pltramses2016ratio.csv and pltramses2016slope.csv, from these.
 
-* *Fig. 27 (effect of reprocessing)*: *to be added*
+* *Fig. 27 (effect of reprocessing)*: Reprocessing/*. The plots beginning with Lumi are before the reprocessing, and LumiWeighted are after. These are the plots only from Francesco, no macros available.
 
 * *Figs. 28 and 29 (cross-luminometer ratio and slope plots)*: LuminometerComparisons/*. Only plots from Rafael.
 

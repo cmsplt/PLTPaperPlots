@@ -80,7 +80,7 @@ def calculateDeplVolt(logData:pandas.DataFrame, ch:int, thr1:float=0.01, thr2:fl
 
 def plotChannel(chData:pandas.DataFrame, ch:int, deplVolt:float, date:str):
     '''plot rate (raw and normalized) vs HV'''
-    scale = chData[f'medianRateN{ch}'].max() / chData[f'medianRate{ch}'].max()
+    scale = chData[f'medianRate{ch}'].iloc[-1] / chData[f'medianRateN{ch}'].iloc[-1]
     mplhep.style.use('CMS')
     (fig, ax) = matplotlib.pyplot.subplots(figsize=(10, 6))
     # (fontsize, markersize) = 12, 8
@@ -91,8 +91,8 @@ def plotChannel(chData:pandas.DataFrame, ch:int, deplVolt:float, date:str):
     # matplotlib.pyplot.yticks(fontsize=fontsize)
     # matplotlib.pyplot.text(x=0.01, y=0.99, transform=ax.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=fontsize)
     mplhep.cms.text('Preliminary', loc=1);
-    ax.errorbar(x=chData['hv'], y=chData[f'medianRateN{ch}'], yerr=chData[f'stdevRateN{ch}'], ls='', marker='o', label='PLT normalized') # markersize=markersize
-    ax.errorbar(x=chData['hv'], y=chData[f'medianRate{ch}']*scale, yerr=chData[f'stdevRate{ch}']*scale, ls='', marker='o', label='PLT') # # markersize=markersize
+    ax.errorbar(x=chData['hv'], y=chData[f'medianRateN{ch}']*scale, yerr=chData[f'stdevRateN{ch}']*scale, ls='', marker='o', label='PLT normalized') # markersize=markersize
+    ax.errorbar(x=chData['hv'], y=chData[f'medianRate{ch}'], yerr=chData[f'stdevRate{ch}'], ls='', marker='o', label='PLT') # # markersize=markersize
     ax.legend(loc='lower right', borderpad=0.1, labelspacing=0.1, fancybox=True, framealpha=0.4) # fontsize=fontsize
     ax.axvline(deplVolt, color='red')
     fig.tight_layout()

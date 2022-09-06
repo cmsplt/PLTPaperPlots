@@ -111,7 +111,7 @@
 
   leg1->SetFillColor(kWhite);
   leg1->SetLineColor(kWhite);
-  leg1->AddEntry("dataSet","Data", "P");
+  leg1->AddEntry("dataSet","Data", "PE");
   leg1->AddEntry("signal","Template from VdM fit", "L");
   leg1->AddEntry("background","Accidentals", "L");
   leg1->AddEntry("model","Total fit","L");
@@ -137,9 +137,9 @@
   pt_LaTex = pt->AddText("2016");
   pt->Draw();
 
-  c0->SaveAs("MaxL_CMS.png");
-  c0->SaveAs("MaxL_CMS.pdf");
-  c0->SaveAs("MaxL_CMS.root");
+  c0->SaveAs("AccidentalLikelihoodFit_4979.png");
+  c0->SaveAs("AccidentalLikelihoodFit_4979.pdf");
+  c0->SaveAs("AccidentalLikelihoodFit_4979.root");
 
   pt = new TPaveText(-0.02666583,27758.24,0.01466683,56738.89,"br");
   pt->SetBorderSize(0);
@@ -150,7 +150,7 @@
   pt_LaTex = pt->AddText("Preliminary");
   pt->Draw();
   
-  c0->SaveAs("MaxL_CMSpreliminary.png");
-  c0->SaveAs("MaxL_CMSpreliminary.pdf");
-  c0->SaveAs("MaxL_CMSpreliminary.root");
+  c0->SaveAs("AccidentalLikelihoodFit_4979_preliminary.png");
+  c0->SaveAs("AccidentalLikelihoodFit_4979_preliminary.pdf");
+  c0->SaveAs("AccidentalLikelihoodFit_4979_preliminary.root");
 }

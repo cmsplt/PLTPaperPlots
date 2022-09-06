@@ -67,7 +67,7 @@
   // Fit data
   model.fitTo(dataRead, Save());
 
-  model.plotOn(frame1, Components(RooArgSet(sig)), LineColor(kGreen), LineStyle(kDotted), Name("signal"));
+  model.plotOn(frame1, Components(RooArgSet(sig)), LineColor(kGreen+3), LineStyle(kDotted), Name("signal"));
   model.plotOn(frame1, Components(RooArgSet(bkg)), LineColor(kRed), LineStyle(kDashed), Name("background"));
   model.plotOn(frame1, Name("model"));
 

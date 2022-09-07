@@ -2,6 +2,12 @@
 {
   using namespace RooFit;
 
+  gROOT->SetStyle("Plain");                  
+  gStyle->SetPadRightMargin(0.05);
+  gStyle->SetCanvasBorderMode(0);
+  gStyle->SetLegendBorderSize(0);
+  gStyle->SetOptStat(0);
+
   uint32_t track_init = 0;
   uint32_t step = 50000;
 
@@ -61,8 +67,8 @@
   // Fit data
   model.fitTo(dataRead, Save());
 
-  model.plotOn(frame1, Components(RooArgSet(sig)), LineColor(kGreen), Name("signal"));
-  model.plotOn(frame1, Components(RooArgSet(bkg)), LineColor(kRed), Name("background"));
+  model.plotOn(frame1, Components(RooArgSet(sig)), LineColor(kGreen+3), LineStyle(kDotted), Name("signal"));
+  model.plotOn(frame1, Components(RooArgSet(bkg)), LineColor(kRed), LineStyle(kDashed), Name("background"));
   model.plotOn(frame1, Name("model"));
 
   // Removing Errors bars when bin value is zero
@@ -98,14 +104,14 @@
 
   frame1->Draw();
 
-  TLegend *leg1 = new TLegend(0.55,0.73,0.81,0.87);
+  TLegend *leg1 = new TLegend(0.58,0.70,0.84,0.87);
 
 
 //https://root-forum.cern.ch/t/legend-with-rooplot/10966
 
   leg1->SetFillColor(kWhite);
   leg1->SetLineColor(kWhite);
-  //leg1->AddEntry("dataSet","Data", "P");
+  leg1->AddEntry("dataSet","Data", "PE");
   leg1->AddEntry("signal","Template from VdM fit", "L");
   leg1->AddEntry("background","Accidentals", "L");
   leg1->AddEntry("model","Total fit","L");
@@ -131,9 +137,9 @@
   pt_LaTex = pt->AddText("2016");
   pt->Draw();
 
-  c0->SaveAs("MaxL_CMS.png");
-  c0->SaveAs("MaxL_CMS.pdf");
-  c0->SaveAs("MaxL_CMS.root");
+  c0->SaveAs("AccidentalLikelihoodFit_4979.png");
+  c0->SaveAs("AccidentalLikelihoodFit_4979.pdf");
+  c0->SaveAs("AccidentalLikelihoodFit_4979.root");
 
   pt = new TPaveText(-0.02666583,27758.24,0.01466683,56738.89,"br");
   pt->SetBorderSize(0);
@@ -144,7 +150,7 @@
   pt_LaTex = pt->AddText("Preliminary");
   pt->Draw();
   
-  c0->SaveAs("MaxL_CMSpreliminary.png");
-  c0->SaveAs("MaxL_CMSpreliminary.pdf");
-  c0->SaveAs("MaxL_CMSpreliminary.root");
+  c0->SaveAs("AccidentalLikelihoodFit_4979_preliminary.png");
+  c0->SaveAs("AccidentalLikelihoodFit_4979_preliminary.pdf");
+  c0->SaveAs("AccidentalLikelihoodFit_4979_preliminary.root");
 }

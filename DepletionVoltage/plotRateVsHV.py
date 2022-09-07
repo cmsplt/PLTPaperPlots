@@ -90,14 +90,15 @@ def plotChannel(chData:pandas.DataFrame, ch:int, deplVolt:float, date:str):
     # matplotlib.pyplot.xticks(fontsize=fontsize)
     # matplotlib.pyplot.yticks(fontsize=fontsize)
     # matplotlib.pyplot.text(x=0.01, y=0.99, transform=ax.transAxes, horizontalalignment='left', verticalalignment='top', s=r'$\bf{CMS}$ $\it{Preliminary}$', fontsize=fontsize)
-    mplhep.cms.text('Preliminary', loc=1);
-    ax.errorbar(x=chData['hv'], y=chData[f'medianRateN{ch}']*scale, yerr=chData[f'stdevRateN{ch}']*scale, ls='', marker='o', label='PLT normalized') # markersize=markersize
-    ax.errorbar(x=chData['hv'], y=chData[f'medianRate{ch}'], yerr=chData[f'stdevRate{ch}'], ls='', marker='o', label='PLT') # # markersize=markersize
+    mplhep.cms.text('', loc=1);
+    ax.errorbar(x=chData['hv'], y=chData[f'medianRateN{ch}']*scale, yerr=chData[f'stdevRateN{ch}']*scale, ls='', marker='s', label='PLT normalized') # markersize=markersize
+    ax.errorbar(x=chData['hv'], y=chData[f'medianRate{ch}'], yerr=chData[f'stdevRate{ch}'], ls='', marker='d', label='PLT') # # markersize=markersize
     ax.legend(loc='lower right', borderpad=0.1, labelspacing=0.1, fancybox=True, framealpha=0.4) # fontsize=fontsize
     ax.axvline(deplVolt, color='red')
     fig.tight_layout()
     # matplotlib.pyplot.show()
     os.makedirs(f'{date}/', exist_ok=True)
+    fig.savefig(f'{date}/{date}.ch{ch}.pdf', dpi=300)
     fig.savefig(f'{date}/{date}.ch{ch}.png', dpi=300)
     matplotlib.pyplot.close('all')
 

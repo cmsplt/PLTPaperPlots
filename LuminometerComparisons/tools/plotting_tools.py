@@ -1,0 +1,842 @@
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+import settings as setts
+import tools.lumi_tools as ltools
+# from statsmodels.graphics.api import abline_plot
+import seaborn as sns
+import numpy as np
+import pandas as pd
+import pickle as pck
+from lmfit import Model
+# import plotly.express as px
+
+plt.rcParams.update({'figure.max_open_warning': 0})
+
+__cms_label_pos_sq = setts.cms_label_pos_sq
+__cms_label_pos_nsq = setts.cms_label_pos_nsq
+__delta_y_pos_sq = setts.delta_y_pos_sq
+__delta_y_pos_nsq = setts.delta_y_pos_nsq
+
+__year_energy_label_pos_sq = setts.year_energy_label_pos_sq
+__year_energy_label_pos_nsq = setts.year_energy_label_pos_nsq
+
+
+def save_py_fig_to_file(fig, output_name, plot_dpi=None):
+    if plot_dpi is not None:
+        fig.savefig(output_name, dpi=plot_dpi)
+    else:
+        fig.savefig(output_name)
+    plt.close(fig)
+
+
+def save_plots(names_and_plots, output_name, save_pickle=False):
+    ltools.check_and_create_folder(output_name)
+    plot_names = list(names_and_plots)
+    for plot_name in plot_names:
+        plot_object = names_and_plots[plot_name]
+
+        # saving figure as pickle
+        if save_pickle:
+            save_plot_as_pickle(plot_object, output_name + plot_name + '.pickle')
+
+        if type(setts.plots_formats) == tuple or type(setts.plots_formats) == list:
+            for plot_format in setts.plots_formats:
+                plot_full_path = output_name + plot_name + '.' + plot_format
+                if plot_format == "png":
+                    save_py_fig_to_file(plot_object, plot_full_path, plot_dpi=setts.dpi_png_plots)
+                else:
+                    save_py_fig_to_file(plot_object, plot_full_path)
+                print('saved plot: ' + plot_full_path)
+        elif type(setts.plots_formats) == str:
+            plot_format = setts.plots_formats
+            plot_full_path = output_name + plot_name + '.' + plot_format
+            if plot_format == "png":
+                save_py_fig_to_file(plot_object, plot_full_path, plot_dpi=setts.dpi_png_plots)
+            else:
+                save_py_fig_to_file(plot_object, plot_full_path)
+            print('saved plot: ' + plot_full_path)
+        else:
+            raise IOError("No format information for saving plots have been provided! check settings.py")
+
+
+# TODO: set histo range for same binning
+def hist_from_pandas_frame(data_frame, col_label, nbins, title='', xlabel='', ylabel='', xmin=0.0, xmax=0.0,
+                           x_data_range=None,
+                           weight_label=None,
+                           mean=None, stdv=None, err_mean=None, color='#86bf91',
+                           label_cms_status=True, energy_year_label='',
+                           mean_float_format="{0:.3f}",
+                           stdv_float_format="{0:.4f}",
+                           mean_err_float_format="{0:.4f}",
+                           fig_size_shape='sq',
+                           normlize=None):
+    fig_size = get_fig_size(fig_size_shape)
+    if x_data_range is None:
+        x_data_range = (xmin, xmax)
+    if weight_label:
+        ratio_hist = data_frame.hist(bins=nbins, column=col_label, grid=False, weights=data_frame[weight_label],
+                                     figsize=fig_size, sharex=True, color=color,
+                                     range=x_data_range, density=normlize)
+    else:
+        ratio_hist = data_frame.hist(bins=nbins, column=col_label, grid=False,
+                                     figsize=fig_size, sharex=True, color=color,
+                                     range=x_data_range, density=normlize)
+
+    ratio_hist_ax = ratio_hist[0][0]
+
+    ratio_hist_ax.set_title(title)
+    ratio_hist_ax.set_xlabel(xlabel, labelpad=setts.axis_labelpad_x, weight=setts.axis_weight,
+                             size=setts.axis_case_size[fig_size_shape])
+    ratio_hist_ax.set_ylabel(ylabel, labelpad=setts.axis_labelpad_y, weight=setts.axis_weight,
+                             size=setts.axis_case_size[fig_size_shape])
+
+    plt.xticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+    plt.yticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+
+    if xmin != 0 and xmax != 0:
+        plt.xlim(xmin, xmax)
+        ax = plt.gca()
+        for label in ax.get_xaxis().get_ticklabels()[::2]:
+            label.set_visible(False)
+
+    # histogram info
+    if stdv:
+        if mean:
+            plt.text(setts.pos_leg_1[0], setts.pos_leg_1[1], 'mean: ' + str(float(mean_float_format.format(mean))),
+                     ha='left',
+                     fontsize=setts.leg_font_size, fontweight='normal', transform=ratio_hist_ax.transAxes)
+                     # fontsize=setts.leg_font_size, fontweight='light', transform=ratio_hist_ax.transAxes)
+        # plt.text(setts.pos_leg_2[0], setts.pos_leg_2[1], r'$\sigma$: ' + str(float(stdv_float_format.format(stdv))),
+        plt.text(setts.pos_leg_2[0], setts.pos_leg_2[1], r'$\mathrm{\sigma}$: ' + str(float(stdv_float_format.format(stdv))),
+                 ha='left',
+                 # fontsize=setts.leg_font_size, fontweight='light', transform=ratio_hist_ax.transAxes)
+                 fontsize=setts.leg_font_size, fontweight='normal', transform=ratio_hist_ax.transAxes)
+        if err_mean:
+            plt.text(setts.pos_leg_3[0], setts.pos_leg_3[1],
+                     'err: ' + str(float(mean_err_float_format.format(err_mean))),
+                     ha='left',
+                     # fontsize=setts.leg_font_size, fontweight='light', transform=ratio_hist_ax.transAxes)
+                     fontsize=setts.leg_font_size, fontweight='normal', transform=ratio_hist_ax.transAxes)
+    elif mean:
+        plt.text(setts.pos_leg_1[0], setts.pos_leg_1[1], 'mean: ' + str(float(mean_float_format.format(mean))),
+                 ha='left',
+                 fontsize=setts.leg_font_size,
+                 # fontweight='light', transform=ratio_hist_ax.transAxes)
+                 fontweight='normal', transform=ratio_hist_ax.transAxes)
+    elif err_mean:
+        plt.text(setts.pos_leg_1[0], setts.pos_leg_1[1], 'err: ' + str(float(mean_err_float_format.format(err_mean))),
+                 ha='left',
+                 fontsize=setts.leg_font_size,
+                 # fontweight='light', transform=ratio_hist_ax.transAxes)
+                 fontweight='normal', transform=ratio_hist_ax.transAxes)
+
+    if label_cms_status:
+        add_extra_text(ratio_hist_ax, fig_size_shape, energy_year_label=energy_year_label,
+                       experiment=setts.experiment, work_status=setts.work_status)
+
+    return ratio_hist
+
+
+def hist_from_array(data, nbins, title='', xlabel='', ylabel='', xmin=0.0, xmax=0.0,
+                    weight=None,
+                    mean=None, stdv=None, err_mean=None, color='royalblue',
+                    label_cms_status=True, energy_year_label='',
+                    fig_size_shape='sq',
+                    mean_float_format="{0:.3f}",
+                    stdv_float_format="{0:.4f}",
+                    mean_err_float_format="{0:.4f}"):
+    fig_size = get_fig_size(fig_size_shape)
+    fig, ax = plt.subplots(figsize=fig_size)
+    if weight:
+        plt.hist(data, bins=nbins, weights=weight,
+                 color=color)
+    else:
+        plt.hist(data, bins=nbins,
+                 color=color)
+
+    ax.set_title(title)
+    ax.set_xlabel(xlabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+    ax.set_ylabel(ylabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+    plt.xticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+    plt.yticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+
+    if xmin != 0 and xmax != 0:
+        plt.xlim(xmin, xmax)
+
+    # histogram info
+    if stdv:
+        if mean:
+            plt.text(setts.pos_leg_1[0], setts.pos_leg_1[1], 'mean: ' + str(float(mean_float_format.format(mean))),
+                     ha='left',
+                     fontsize=setts.leg_font_size, fontweight='light', transform=ax.transAxes)
+        plt.text(setts.pos_leg_2[0], setts.pos_leg_2[1], r'$\sigma$: ' + str(float(stdv_float_format.format(stdv))),
+                 ha='left',
+                 fontsize=setts.leg_font_size, fontweight='light', transform=ax.transAxes)
+        if err_mean:
+            plt.text(setts.pos_leg_3[0], setts.pos_leg_3[1],
+                     'err: ' + str(float(mean_err_float_format.format(err_mean))),
+                     ha='left',
+                     fontsize=setts.leg_font_size, fontweight='light', transform=ax.transAxes)
+    elif mean:
+        plt.text(setts.pos_leg_1[0], setts.pos_leg_1[1], 'mean: ' + str(float(mean_float_format.format(mean))),
+                 ha='left',
+                 fontsize=setts.leg_font_size,
+                 fontweight='light', transform=ax.transAxes)
+    elif err_mean:
+        plt.text(setts.pos_leg_1[0], setts.pos_leg_1[1], 'err: ' + str(float(mean_err_float_format.format(err_mean))),
+                 ha='left',
+                 fontsize=setts.leg_font_size,
+                 fontweight='light', transform=ax.transAxes)
+
+    if label_cms_status:
+        add_extra_text(ax, fig_size_shape, energy_year_label=energy_year_label,
+                       experiment=setts.experiment, work_status=setts.work_status)
+
+    return fig
+
+
+def scatter_plot_from_pandas_frame(data_frame, x_data_label, y_data_label, title='', xlabel='', ylabel='',
+                                   ymin=None, ymax=None, xmin=None, xmax=None,
+                                   color='#86bf91', label_cms_status=True,
+                                   energy_year_label='', legend_labels=None, legend_position=setts.leg_vs_plots_pos,
+                                   leg_marker_sc=setts.leg_vs_plots_marker_scale,
+                                   marker_size=1.0,
+                                   leg_text_s=setts.leg_vs_plots_text_s,
+                                   plot_style='o',
+                                   fig_size_shape='nsq',
+                                   ncol_legend=None,
+                                   draw_labels_pos_dict=None,
+                                   draw_vertical_line_pos=None,
+                                   draw_vertical_bands_array_pos=None,
+                                   draw_vertical_bands_array_color="blue",
+                                   draw_vertical_bands_array_alpha=0.3,
+                                   title_loc='center'):
+    fig_size = get_fig_size(fig_size_shape)
+    if xlabel == '':
+        xlabel = x_data_label
+    if ylabel == '':
+        ylabel = y_data_label
+    fig, ax = plt.subplots()
+
+    if type(y_data_label) == list:
+        plot = data_frame.plot(x=x_data_label, y=y_data_label, style=plot_style, figsize=fig_size,
+                               markersize=marker_size, ax=ax)
+        if legend_labels is None:
+            legend_labels = y_data_label
+        else:
+            assert len(legend_labels) == len(y_data_label)
+
+        if not ncol_legend:
+            ncol_legend = len(legend_labels)
+
+        ax.legend(legend_labels, ncol=ncol_legend,
+                  markerscale=leg_marker_sc, fontsize=leg_text_s, loc=legend_position)
+    else:
+        plot = data_frame.plot(x=x_data_label, y=y_data_label, style=plot_style, figsize=fig_size,
+                               markersize=marker_size, legend=None, ax=ax)
+    plot.set_title(title, loc=title_loc)
+    plot.set_ylabel(ylabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                    size=setts.axis_case_size[fig_size_shape])
+    plot.set_xlabel(xlabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                    size=setts.axis_case_size[fig_size_shape])
+
+    plt.xticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+    plt.yticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+
+    if label_cms_status:
+        add_extra_text(ax, fig_size_shape, energy_year_label=energy_year_label,
+                       experiment=setts.experiment, work_status=setts.work_status)
+
+    # Draw vertical lines
+    if draw_vertical_line_pos is not None:
+        for x_pos in draw_vertical_line_pos:
+            plt.axvline(x=x_pos, linestyle='dashed', alpha=0.3)
+
+    # Draw text from draw_labels_pos_dict -> {"text": [x, y], ... }
+    if draw_labels_pos_dict is not None:
+        labels_text = list(draw_labels_pos_dict)
+        for i_label in labels_text:
+            plt.text(draw_labels_pos_dict[i_label][0], draw_labels_pos_dict[i_label][1], i_label,
+                     fontweight='bold', alpha=0.5, horizontalalignment='center', verticalalignment='center'
+                     )
+
+    # Draw vertical bands
+    if draw_vertical_bands_array_pos is not None:
+        for x_limits in draw_vertical_bands_array_pos:
+            ax.axvspan(x_limits[0], x_limits[1], alpha=draw_vertical_bands_array_alpha,
+                       color=draw_vertical_bands_array_color)
+
+    # margin optimization
+    if fig_size == (12, 4):
+        plt.subplots_adjust(left=0.1, right=0.97, top=0.9, bottom=0.2)
+    # else:
+    #     raise Warning('nsq_fig_size not optimized')
+
+    if ymin and ymax:
+        plt.ylim(ymin, ymax)
+
+    if xmin and xmax:
+        plt.xlim(xmin, xmax)
+
+    return plot
+
+
+# def plot_from_fit(data_frame, model_fit, x_data_label, y_data_label, fig_size='sq'):
+#     fig, ax = plt.subplots()
+#     data_plot = data_frame.plot(x=x_data_label, y=y_data_label, style='o', figsize=fig_size,
+#                                 markersize=0.5, ax=ax)
+#     abline_plot(model_results=model_fit, ax=ax)
+#
+#     return data_plot
+def plot_from_fit(x, y, fitted_slope, fitted_slope_err, fitted_intercept, fitted_f,
+                  energy_year_label, chi2=None,
+                  xlabel='', ylabel='', y_err=[],
+                  markersize=5, add_linearity_special_text=False,
+                  ymin=None, ymax=None):
+    fig_size_shape = 'sq'
+    fig, ax = plt.subplots(figsize=(8, 8))
+    if len(y_err) > 0:
+        assert len(y_err) == len(x)
+        plt.errorbar(x, y, yerr=y_err, markersize=markersize, markerfacecolor='red', fmt='o')
+    else:
+        plt.scatter(x, y, s=markersize)
+    xfine = np.linspace(np.min(x), np.max(x), 100)
+    plt.plot(xfine, fitted_f(xfine, a=fitted_slope, b=fitted_intercept), 'r-')
+
+    ax.set_xlabel(xlabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+    ax.set_ylabel(ylabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+
+    plt.xticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+    plt.yticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+
+    add_extra_text(ax, fig_size_shape, energy_year_label=energy_year_label,
+                   experiment=setts.experiment, work_status=setts.work_status)
+
+    # Adding fitting info
+    if add_linearity_special_text:
+        plt.text(setts.pos_by_fill_fit_info[0], setts.pos_by_fill_fit_info[1],
+                 r"slope[hz/" + r"$\mu$" + "b]: " + str(float("{0:.4f}".format(fitted_slope))) +
+                 r' $\pm$ ' + str(float("{0:.4f}".format(fitted_slope_err))),
+                 ha='left',
+                 fontsize=setts.leg_font_size, fontweight='bold', transform=ax.transAxes)
+        if chi2:
+            plt.text(setts.pos_by_fill_fit_chi2_info[0], setts.pos_by_fill_fit_chi2_info[1],
+                     r"$\chi^2/dof$ = " + str(float("{0:.2f}".format(chi2))),
+                     ha='left',
+                     fontsize=setts.leg_font_size, fontweight='bold', transform=ax.transAxes)
+
+    if ymin is not None and ymax is not None:
+        plt.ylim(ymin, ymax)
+
+    if fig_size_shape == 'sq':
+        plt.subplots_adjust(left=0.18, right=0.95, top=0.92, bottom=0.1)
+
+    return fig
+
+
+def plot_from_lmfit(fitted_model, xlabel='', ylabel='', title='', title_loc='center'):
+    # fig_size_shape = 'sq'
+    # fig_size = get_fig_size(fig_size_shape)
+    # fig, ax = plt.subplots(figsize=fig_size)
+
+    fig, gs = fitted_model.plot(xlabel=xlabel, ylabel=ylabel)
+    ax_list = fig.axes
+    residuals_ax = ax_list[0]
+    main_plot_ax = ax_list[1]
+
+    slope = str(float("{0:.4f}".format(fitted_model.params['a'].value)))
+    # slope_err = str(float("{0:.4f}".format(fitted_model.params['a'].stderr)))
+    intercept = str(float("{0:.4f}".format(fitted_model.params['b'].value)))
+    # intercept_err = str(float("{0:.4f}".format(fitted_model.params['b'].stderr)))
+    chi2 = str(float("{0:.4f}".format(fitted_model.redchi)))
+
+    slope_summary_text = "slope: " + slope  # + r' $\pm$ ' + slope_err
+    intercept_summary_text = "intercept: " + intercept  # + r' $\pm$ ' + intercept_err
+    chi2_summary_text = r"$\chi^2/dof$: " + chi2
+    fit_summary_text = slope_summary_text + "\n" + \
+                       intercept_summary_text + "\n" + \
+                       chi2_summary_text
+
+    # Adding fit results
+    main_plot_ax.text(0.69, 0.22, fit_summary_text,
+                      verticalalignment='top', horizontalalignment='left',
+                      transform=main_plot_ax.transAxes, color='green', fontsize=12)
+
+    main_plot_ax.set_title("")
+    residuals_ax.set_title("")
+    residuals_ax.set_title(title, loc=title_loc)
+
+    residuals_ax.set_ylim(-4, 4)
+
+    return fig
+
+
+def plot_scatter_from_dict(in_dict: dict, new_xticks,
+                           xlabel='', ylabel='',
+                           markersize=5,
+                           ymin=None, ymax=None,
+                           fig_size_shape='sq',
+                           title="",
+                           title_loc="center",
+                           summary_text="",
+                           h_line_1=None, h_line_1_err=None,
+                           h_line_2=None, h_line_2_err=None):
+    fig_size = get_fig_size(fig_size_shape)
+    fig, ax = plt.subplots(figsize=fig_size)
+    plot_names = list(in_dict)
+
+    temp_x = x = np.array([i for i in range(len(in_dict[plot_names[0]]))])
+    for plot_name in plot_names:
+        y = np.array(in_dict[plot_name])
+        x = np.array([i for i in range(len(y))])
+        plt.xticks(x, new_xticks)
+        plt.plot(x, y, 'o', label=plot_name)
+
+    plt.legend(loc='upper left')
+    ax.set_title(title, loc=title_loc)
+    ax.set_xlabel(xlabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+    ax.set_ylabel(ylabel, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+    plt.xticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+    plt.yticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+
+    # Adding summary results
+    ax.text(0.50, 0.98, summary_text,
+            verticalalignment='top', horizontalalignment='left',
+            transform=ax.transAxes, color='green', fontsize=12)
+
+    if h_line_1:
+        if h_line_1_err:
+            ax.fill_between(temp_x, h_line_1-h_line_1_err, h_line_1+h_line_1_err, color='blue', alpha=0.2)
+        ax.axhline(c='blue', y=h_line_1, alpha=0.6, ls='--')
+    if h_line_2:
+        if h_line_2_err:
+            ax.fill_between(temp_x, h_line_2-h_line_2_err, h_line_2+h_line_2_err, color='red', alpha=0.2)
+        ax.axhline(c='red', y=h_line_2, alpha=0.6, ls='--')
+
+    if ymin is not None and ymax is not None:
+        plt.ylim(ymin, ymax)
+
+    if fig_size_shape == 'sq':
+        plt.subplots_adjust(left=0.18, right=0.95, top=0.92, bottom=0.1)
+
+    return fig
+
+def plot_scatter_and_errors(data_frame, y_data_label, x_data_label, err_y_data_label,
+                            energy_year_label,
+                            xlabel='', ylabel='',
+                            markersize=5,
+                            ymin=None, ymax=None,
+                            use_integers_in_x_axis=False,
+                            fig_size_shape='nsq'):
+    x = data_frame[x_data_label]
+    y = data_frame[y_data_label]
+    y_err = data_frame[err_y_data_label]
+
+    fig_size = get_fig_size(fig_size_shape)
+    fig, ax = plt.subplots(figsize=fig_size)
+
+    if len(y_err) > 0:
+        assert len(y_err) == len(x)
+        plt.errorbar(x, y, yerr=y_err, markersize=markersize, markerfacecolor='red', fmt='o')
+    else:
+        plt.scatter(x, y, s=markersize)
+
+    if ymin is not None:
+        if ymax is not None:
+            plt.ylim(ymin, ymax)
+
+    ax.set_xlabel(xlabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+    ax.set_ylabel(ylabel, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+
+    plt.xticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+    plt.yticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+
+    add_extra_text(ax, fig_size_shape, energy_year_label=energy_year_label,
+                   experiment=setts.experiment, work_status=setts.work_status)
+
+    if use_integers_in_x_axis:
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+    if fig_size_shape == 'sq':
+        plt.subplots_adjust(left=0.18, right=0.95, top=0.92, bottom=0.1)
+
+    return fig
+
+
+def hist_list_from_pandas_frame(list_nls_data, nbins, title='', xlabel='', ylabel='', xmin=0.0, xmax=0.0,
+                                x_data_range=None,
+                                all_nls_weights=pd.DataFrame(),
+                                label_cms_status=True, energy_year_label='',
+                                fig_size_shape='sq',
+                                legend_labels=None, legend_position=setts.leg_vs_plots_pos,
+                                leg_marker_sc=setts.leg_vs_plots_marker_scale,
+                                leg_text_s=setts.leg_vs_plots_text_s, nls_label=True,
+                                histtype='step', stacked=True, fill=False
+                                ):
+    global ratio_hist
+    fig_size = get_fig_size(fig_size_shape)
+    fig, ax = plt.subplots(figsize=fig_size)
+    legend_labels_list = []
+
+    if x_data_range is None:
+        x_data_range = (xmin, xmax)
+
+    for hist_name in list(list_nls_data):
+        if all_nls_weights.empty:
+            list_nls_data[hist_name].hist(bins=nbins, alpha=1, ax=ax, label=hist_name, grid=False, figsize=fig_size,
+                                          range=x_data_range, histtype=histtype, stacked=stacked, fill=fill)
+
+        else:
+            list_nls_data[hist_name].dropna().hist(bins=nbins, alpha=1, ax=ax, label=hist_name, grid=False,
+                                                   figsize=fig_size,
+                                                   range=x_data_range, histtype=histtype, stacked=stacked, fill=fill,
+                                                   weights=all_nls_weights[hist_name].dropna())
+
+    if legend_labels is None:
+        print("No legend set")
+    else:
+        if nls_label:
+            for nls in legend_labels:
+                legend_labels_list.append(str(nls) + " LS")
+        else:
+            legend_labels_list = legend_labels
+        ax.legend(legend_labels_list, ncol=1,
+                  markerscale=leg_marker_sc, fontsize=leg_text_s, loc=legend_position)
+
+    ax.set_title(title)
+    ax.set_xlabel(xlabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+    ax.set_ylabel(ylabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+
+    plt.xticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+    plt.yticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+
+    if xmin != 0 and xmax != 0:
+        plt.xlim(xmin, xmax)
+
+    if label_cms_status:
+        add_extra_text(ax, fig_size_shape, energy_year_label=energy_year_label,
+                       experiment=setts.experiment, work_status=setts.work_status)
+
+    return fig
+
+
+def plot_bad_fill_info(data_frame, x_data_label, y_data_label, z_data_label, title='', xlabel='', ylabel='',
+                       ymin=0.0, ymax=0.0, label_cms_status=True,
+                       energy_year_label='', mean=None, stdv=None,
+                       fig_size_shape='nsq', ratio_acceptance=0.01, filePath='', txtfileName="NoName"):
+    fig_size = get_fig_size(fig_size_shape)
+    fig, ax = plt.subplots(figsize=fig_size)
+
+    x_data_list = list(data_frame[x_data_label])
+    y_data_list = list(data_frame[y_data_label])
+    z_data_list = list(data_frame[z_data_label])
+
+    data = pd.DataFrame()
+
+    for i in range(0, len(x_data_list), 1):
+        if str(x_data_list[i]) in data.keys():
+            data[str(x_data_list[i])][0] = data[str(x_data_list[i])][0] + y_data_list[i] * z_data_list[i]
+            data[str(x_data_list[i])][1] = data[str(x_data_list[i])][1] + z_data_list[i]
+        else:
+            data[str(x_data_list[i])] = (y_data_list[i] * z_data_list[i], z_data_list[i])
+
+    total_lumi = 0
+    for i in list(data):
+        data[i][0] = data[i][0] / data[i][1]
+        total_lumi = total_lumi + data[i][1]
+
+    x_data_reduced = []
+    y_data_mean = []
+    z_data_acum = []
+    ey = []
+    colors = []
+
+    for i in list(data):
+        x_data_reduced.append(int(i))
+        y_data_mean.append(data[i][0])
+        z_data_acum.append(data[i][1])
+        ey.append(1000 * data[i][1] / total_lumi)
+        colors.append(100 * data[i][1] / total_lumi)
+
+    lumi_porcent = max(colors) * setts.lumisensitivity
+    limratioUP = mean + stdv * ratio_acceptance
+    limratioDOWN = mean - stdv * ratio_acceptance
+
+    bad_fills = []
+    bad_fillsPos = []
+
+    for i in range(0, len(x_data_reduced), 1):
+        if (y_data_mean[i] > limratioUP or y_data_mean[i] < limratioDOWN) and (
+                100 * z_data_acum[i] / total_lumi) > lumi_porcent:
+            bad_fills.append(x_data_reduced[i])
+            bad_fillsPos.append((x_data_reduced[i], y_data_mean[i]))
+
+    print(x_data_label + "s to analize", bad_fills)
+    ##write file:
+    ltools.check_and_create_folder(filePath)
+    fileout = open(filePath + txtfileName + ".txt", "w+")
+    for i in bad_fills:
+        fileout.write(str(i) + ' ')
+    fileout.close()
+
+    sc = plt.scatter(x_data_reduced, y_data_mean, s=ey, c=colors, vmin=0, vmax=max(colors))
+
+    plt.plot(x_data_reduced, y_data_mean, linewidth=0.5, alpha=0.8, linestyle="--")
+    plt.axhline(mean, color='black', lw=0.8, alpha=0.7, linestyle="--")
+    plt.axhline(limratioUP, color='red', lw=0.8, alpha=0.7, linestyle="--")
+    plt.axhline(limratioDOWN, color='red', lw=0.8, alpha=0.7, linestyle="--")
+
+    for i, txt in enumerate(bad_fills):
+        plt.annotate(txt, bad_fillsPos[i], xytext=(-25, 25),
+                     textcoords='offset points', ha='right', va='top',
+                     bbox=dict(boxstyle='round,pad=0.3', fc='yellow', alpha=0.5),
+                     arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
+    plt.colormaps()
+    cbar = plt.colorbar(sc)
+    cbar.set_label('% of the total integrated luminosity')
+
+    # plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+
+    if ymin != 0 and ymax != 0:
+        plt.ylim(ymin, ymax)
+
+    if label_cms_status:
+        add_extra_text(ax, fig_size_shape, energy_year_label=energy_year_label,
+                       experiment=setts.experiment, work_status=setts.work_status)
+
+    return fig
+
+
+## All/excluded plots
+def snsplot_detector_all_and_excluded(data_frame, x_data_label, y_data_label, conditional_label, title='', xlabel='',
+                                      ylabel='',
+                                      ymin=None, ymax=None, xmin=None, xmax=None, xlabel_rotation=None,
+                                      label_cms_status=True, energy_year_label='', fig_size_shape='nsq',
+                                      use_pts_white_border=False,
+                                      marker_size=5, leg_col=None):
+    fig_size = get_fig_size(fig_size_shape)
+    fig, ax = plt.subplots(figsize=fig_size)
+
+    assert (type(y_data_label) == type(conditional_label))
+
+    if type(y_data_label) == list and type(conditional_label) == list:
+        for excl_label in conditional_label:
+            if 'by nls exclusion (' not in excl_label:
+                raise AssertionError("Only binary exclusion label [by_nls_binary_exclusion_info_label] "
+                                     "have been implemented for this plot function. Input label: " + excl_label)
+
+        colors = ('blue', 'darkorange', 'magneta')
+        excluded_color = 'red'
+        markers = ("o", "v", "s")
+        marker_size = 13
+
+        detcs_excld_data = {}
+        detcs__data = {}
+
+        for key in y_data_label:
+            detcs_excld_data[key] = {"x": [], "y": []}
+            detcs__data[key] = {"x": [], "y": []}
+
+        nan_found = 0
+        for index_data in range(0, len(data_frame)):
+            for detector_pair_index in range(0, len(y_data_label)):
+                if data_frame[conditional_label[detector_pair_index]][index_data] == "included":
+                    detcs__data[y_data_label[detector_pair_index]]["x"].append(data_frame[x_data_label][index_data])
+                    detcs__data[y_data_label[detector_pair_index]]["y"].append(
+                        data_frame[y_data_label[detector_pair_index]][index_data])
+                elif data_frame[conditional_label[detector_pair_index]][index_data] == "excluded":
+                    detcs_excld_data[y_data_label[detector_pair_index]]["x"].append(
+                        data_frame[x_data_label][index_data])
+                    detcs_excld_data[y_data_label[detector_pair_index]]["y"].append(
+                        data_frame[y_data_label[detector_pair_index]][index_data])
+                elif str(data_frame[conditional_label[detector_pair_index]][index_data]) == 'nan':
+                    nan_found += 1
+                    continue
+                else:
+                    raise AssertionError(
+                        "something wrong!: data_frame[conditional_label[detector_pair_index]][index_data] = " +
+                        str(data_frame[conditional_label[detector_pair_index]][index_data]))
+
+        if nan_found > 0:
+            RuntimeWarning("During snsplot_detector_all_and_excluded " + str(nan_found) +
+                           " nan values have been found in the conditional column")
+
+        for detector_pair_index in range(0, len(y_data_label) - 1):
+            data_label = y_data_label[detector_pair_index]
+            label_in_plot = data_label.split("_")[-1]
+            sns.scatterplot(y=detcs__data[data_label]["y"], x=detcs__data[data_label]["x"],
+                            color=colors[detector_pair_index], ax=ax, s=marker_size, linewidth=0,
+                            marker=markers[detector_pair_index], label=label_in_plot)
+            sns.scatterplot(y=detcs_excld_data[data_label]["y"], x=detcs_excld_data[data_label]["x"],
+                            color=excluded_color,
+                            ax=ax, s=marker_size, linewidth=0, marker=markers[detector_pair_index],
+                            label=label_in_plot + " excl.")
+        plt.legend(ncol=2)
+    else:
+        if not use_pts_white_border:
+            sns.scatterplot(x=x_data_label, y=y_data_label, hue=conditional_label, data=data_frame,
+                            ax=ax, s=marker_size, linewidth=0)
+        else:
+            sns.scatterplot(x=x_data_label, y=y_data_label, hue=conditional_label, style=conditional_style,
+                            data=data_frame,
+                            ax=ax, s=marker_size)
+
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+
+    if ymin is not None:
+        if ymax is not None:
+            plt.ylim(ymin, ymax)
+
+    if xmin is not None:
+        if xmax is not None:
+            plt.xlim(xmin, xmax)
+
+    if label_cms_status:
+        add_extra_text(ax, fig_size_shape, energy_year_label=energy_year_label,
+                       experiment=setts.experiment, work_status=setts.work_status)
+
+    ax.set_title(title)
+    ax.set_ylabel(ylabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+    ax.set_xlabel(xlabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+
+    plt.xticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+    plt.yticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+
+    # margin optimization
+    if fig_size == (12, 4):
+        plt.subplots_adjust(left=0.1, right=0.97, top=0.9, bottom=0.2)
+
+    if xlabel_rotation:
+        plt.xticks(rotation=xlabel_rotation)
+
+    if leg_col is not None:
+        plt.legend(ncol=leg_col)
+
+    return fig
+
+
+def snsplot_hist_all_and_excluded(data_frame, x_data_label, conditional_label, bins, xmin, xmax,
+                                  title='', xlabel='', ylabel='',
+                                  ymin=None, ymax=None,
+                                  label_cms_status=True, energy_year_label='', fig_size_shape='sq'):
+    fig_size = get_fig_size(fig_size_shape)
+    fig, ax = plt.subplots(figsize=fig_size)
+
+    keys = np.unique(data_frame[conditional_label])
+    histos_data = {}
+
+    for key in keys:
+        histos_data[key] = []
+
+    for index_data in range(0, len(data_frame)):
+        key = data_frame[conditional_label][index_data]
+        histos_data[key].append(data_frame[x_data_label][index_data])
+
+    for key in keys:
+        data_to_plot = np.array(histos_data[key])
+        data_to_plot = data_to_plot[~np.isnan(data_to_plot)]
+        data_to_plot = data_to_plot[(data_to_plot >= xmin) & (data_to_plot <= xmax)]
+        sns.distplot(data_to_plot, ax=ax, kde=False, bins=bins, label=key)
+
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+
+    if ymin is not None:
+        if ymax is not None:
+            plt.ylim(ymin, ymax)
+
+    plt.xlim(xmin, xmax)
+
+    if label_cms_status:
+        add_extra_text(ax, fig_size_shape, energy_year_label=energy_year_label,
+                       experiment=setts.experiment, work_status=setts.work_status)
+
+    ax.set_title(title)
+    ax.set_ylabel(ylabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+    ax.set_xlabel(xlabel, labelpad=setts.axis_labelpad, weight=setts.axis_weight,
+                  size=setts.axis_case_size[fig_size_shape])
+
+    plt.xticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+    plt.yticks(fontsize=setts.axis_thicks_case_size[fig_size_shape])
+
+    plt.legend()
+
+    return fig
+
+
+def snsplot_line_plot_from_pandas_cols(data_frame, x_data_label, y_data_label,
+                                       title='', xlabel='', fig_size=(12, 4),
+                                       xmin='', xmax='', ylabel='', ymin=None, ymax=None):
+    fig, ax = plt.subplots(figsize=fig_size)
+    sns.lineplot(ax=ax, data=data_frame, x=x_data_label, y=y_data_label)
+
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+
+    plt.legend()
+
+    return fig
+
+
+def add_extra_text(ax, plot_frame_ratio, energy_year_label='', experiment='', work_status=''):
+    if plot_frame_ratio == 'nsq':
+        plt.text(__year_energy_label_pos_nsq[0], __year_energy_label_pos_nsq[1], str(energy_year_label), ha='left',
+                 fontsize=setts.year_energy_font_size, fontweight='bold', transform=ax.transAxes)
+        plt.text(__cms_label_pos_nsq[0], __cms_label_pos_nsq[1], str(experiment), ha='left',
+                 fontsize=setts.experiment_font_size, fontweight='bold', transform=ax.transAxes)
+        plt.text(__cms_label_pos_nsq[0] + __delta_y_pos_nsq, __cms_label_pos_nsq[1], str(work_status), ha='left',
+                 fontsize=setts.experiment_font_size, fontweight='light', transform=ax.transAxes)
+
+    elif plot_frame_ratio == 'sq':
+        plt.text(__year_energy_label_pos_sq[0], __year_energy_label_pos_sq[1], str(energy_year_label), ha='left',
+                 fontsize=setts.year_energy_font_size, fontweight='bold', transform=ax.transAxes)
+        plt.text(__cms_label_pos_sq[0], __cms_label_pos_sq[1], str(experiment), ha='left',
+                 fontsize=setts.experiment_font_size, fontweight='bold', transform=ax.transAxes)
+        plt.text(__cms_label_pos_sq[0] + __delta_y_pos_sq, __cms_label_pos_sq[1], str(work_status), ha='left',
+                 fontsize=setts.experiment_font_size, fontweight='normal', transform=ax.transAxes)
+                 # fontsize=setts.experiment_font_size, fontweight='light', transform=ax.transAxes)
+    else:
+        raise ValueError('frame ratio value not implemented')
+
+def plot_plt_scatter(x, y):
+    fig, ax = plt.subplots()
+    plt.scatter(x, y)
+
+    return fig
+
+
+def sns_regresion_plot(data, x_data_label, y_data_label):
+    sns.set(color_codes=True)
+    fig = sns.lmplot(x=x_data_label, y=y_data_label, data=data)
+
+    return fig
+
+
+def get_fig_size(shape: str) -> tuple:
+    return setts.fig_sizes[shape]
+
+
+def save_plot_as_pickle(figure_to_save, out_path):
+    with open(out_path, 'wb') as out_file:
+        pck.dump(figure_to_save, out_file)
+
+
+def load_plot_from_pickle(input_file):
+    fig_handle = pck.load(open(input_file, 'rb'))
+    return fig_handle

@@ -126,7 +126,7 @@ void PlotSlopeFit(void) {
   gtr->SetMarkerSize(1);
   gtr->GetYaxis()->SetTitleOffset(1.2);
   glead->Draw("same P");
-  glead->SetMarkerStyle(kFullCircle);
+  glead->SetMarkerStyle(kFullSquare);
   glead->SetMarkerColor(kBlue);
   glead->SetLineColor(kBlue);
   glead->SetMarkerSize(1);

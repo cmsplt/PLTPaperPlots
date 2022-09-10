@@ -492,7 +492,7 @@ void PlotTrackLumiVdMPaper(int whichPlot) {
     gx->SetTitle(capSigmaPlotTitle.c_str());
     gx->GetXaxis()->SetTitle(xAxisTitle.c_str());
     gx->GetYaxis()->SetTitle("Beam overlap width (#mum)");
-    gx->SetMarkerStyle(kFullCircle);
+    gx->SetMarkerStyle(kFullSquare);
     gx->SetMarkerColor(kBlue);
     gx->SetMarkerSize(1);
     gy->Draw("P same");

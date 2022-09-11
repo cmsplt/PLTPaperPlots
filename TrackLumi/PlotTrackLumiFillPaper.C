@@ -280,13 +280,13 @@ void PlotTrackLumiFillPaper(void) {
   g_lhf->GetXaxis()->SetTimeOffset(0,"gmt");
 
   g_lpz->Draw("P same");
-  g_lpz->SetMarkerStyle(kFullCircle);
+  g_lpz->SetMarkerStyle(kFullSquare);
   g_lpz->SetMarkerColor(kBlue);
   g_lpz->SetMarkerSize(1);
 
   g_ltr->Draw("P same");
-  g_ltr->SetMarkerStyle(kFullCircle);
-  g_ltr->SetMarkerColor(kGreen);
+  g_ltr->SetMarkerStyle(kFullCross);
+  g_ltr->SetMarkerColor(kGreen+2);
   g_ltr->SetMarkerSize(1);
 
   TLegend *l = new TLegend(0.3, 0.14, 0.7, 0.34);
@@ -325,7 +325,7 @@ void PlotTrackLumiFillPaper(void) {
   g_rtp->GetXaxis()->SetTitle("Local CERN time");
   g_rtp->GetYaxis()->SetTitle("Luminosity ratio");
   g_rtp->GetYaxis()->SetTitleOffset(1.5);
-  g_rtp->SetMarkerStyle(kFullCircle);
+  g_rtp->SetMarkerStyle(kFullSquare);
   g_rtp->SetMarkerColor(kBlue);
   g_rtp->SetLineColor(kBlue);
   g_rtp->SetMarkerSize(1);
@@ -353,7 +353,7 @@ void PlotTrackLumiFillPaper(void) {
   g_rlp->GetXaxis()->SetTitle("SBIL (Hz/#mub)");
   g_rlp->GetYaxis()->SetTitle("Luminosity ratio");
   g_rlp->GetYaxis()->SetTitleOffset(1.5);
-  g_rlp->SetMarkerStyle(kFullCircle);
+  g_rlp->SetMarkerStyle(kFullSquare);
   g_rlp->SetMarkerColor(kBlue);
   g_rlp->SetLineColor(kBlue);
   g_rlp->SetMarkerSize(1);

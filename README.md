@@ -64,3 +64,5 @@ Ideally, this directory should contain the scripts and all necessary data needed
 * To calculate the combined uncertainty on the luminosity, use the file combined_PLT_luminosity.txt with the script Normtags/Scripts/combineYears.py. This contains the necessary uncertainties to compute the combined value.
 
 * SystematicsTable.png is just a snippet from the rendered PDF that can be used for things like the public results page.
+
+* RefereeComments/ contains a script used to make a plot for the response to one of the referee comments, comparing the rates from the - and + side in a VdM scan. See the script itself for more documentation.

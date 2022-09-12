@@ -5,6 +5,19 @@
 // to answer the referee comment about the robustness of the acceptance
 // after losing some telescopes.
 //
+// To use this script:
+// 1) Find the histogram file for the target fill on pltvme1.
+// 2) Find the CSV file for the VdM scan in /brildata/vdm.
+// 3) Use cmsplt/interface/scripts/extractVdMTimestamps.py on the CSV file to convert
+//    it to PLT format. Then take the desired scans out of the file and put them in
+//    one or more separate files. (The four files for the imaging scans in Fill 4266
+//    are included here as Timestamps_VdM_4266_BI[12][XY].txt.)
+// 4) Use cmsplt/interface/bin/histfile_extractVdMRates with the histogram file and
+//    the timestamp file to get the rates per channel for each scan. (The four files
+//    for the imaging scans are included here as VdMRates_4266_BI[12][XY].txt.)
+// 5) Use this script to plot them, changing the file names and plot titles below
+//    in the two calls to plotInputFile() as necessary.
+//
 // Paul Lujan, September 11 2022
 //
 ////////////////////////////////////////////////////////////////////////////
